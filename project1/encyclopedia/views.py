@@ -6,6 +6,10 @@ import markdown
 from . import util
 
 
+class new_page_form(forms.Form):
+    title = forms.CharField(required = True)
+    text = forms.CharField(required = True, widget = forms.Textarea)
+
 def index(request):
     return render(request, "encyclopedia/index.html", {
         "entries": util.list_entries(),
@@ -16,9 +20,7 @@ def entry(request, title):
     
     file = util.get_entry(title)
     if not file:
-        return render(request, "encyclopedia/404.html", {
-            "page_title": 404
-        })
+        return render(request, "encyclopedia/404.html")
     page_text = markdown.markdown(file)
     
     return render(request, "encyclopedia/entry.html", {
@@ -27,7 +29,7 @@ def entry(request, title):
     })
     
 def search(request):
-    q = request.POST.get('q')
+    q = request.POST.get("q")
     if q in util.list_entries():
         return redirect('entry', q)
     else:
@@ -38,6 +40,23 @@ def search(request):
         return render(request, "encyclopedia/results.html", {
             "matches": partial_matches,
         })
-    
+
+def newpage(request):
+    if request.method == "POST":
+        form = new_page_form(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data.get("title")
+            text = form.cleaned_data.get("text")
+            text = f'# {title}\n\n{text}'
+            
+            if title in util.list_entries():
+                return render(request, "encyclopedia/409.html")
+            else:
+                util.save_entry(title, text)
+                return redirect('entry', title)
+                    
+    return render(request, "encyclopedia/newpage.html", {
+        "new_page_form": new_page_form
+    })
     
         
