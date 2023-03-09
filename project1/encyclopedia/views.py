@@ -8,12 +8,30 @@ from . import util
 
 
 class new_page_form(forms.Form):
-    title = forms.CharField(required = True, widget = forms.TextInput(attrs={"placeholder": "Page title", "style": "width: 300px", "class": "form-control" }))
-    text = forms.CharField(required = True, widget = forms.Textarea(attrs={"placeholder": "Page text", "style": "width: 600px", "class": "form-control", "rows": "20"}))
+    title = forms.CharField(required = True, widget = forms.TextInput(attrs = {
+        "placeholder": "Page title",
+        "style": "width: 300px",
+        "class": "form-control",
+        }))
+    text = forms.CharField(required = True, widget = forms.Textarea(attrs = {
+        "placeholder": "Page text",
+        "style": "width: 600px",
+        "class": "form-control",
+        "rows": "20",
+        }))
     
 class edit_page_form(forms.Form):
-    title = forms.CharField(required = True, widget = forms.TextInput(attrs={"placeholder": "Page title", "style": "width: 300px", "class": "form-control" }))
-    text = forms.CharField(required = True, widget = forms.Textarea(attrs={"placeholder": "Page text", "style": "width: 600px", "class": "form-control", "rows": "20"}))
+    title = forms.CharField(required = True, widget = forms.TextInput(attr = {
+        "placeholder": "Page title",
+        "style": "width: 300px",
+        "class": "form-control",
+        }))
+    text = forms.CharField(required = True, widget = forms.Textarea(attrs = {
+        "placeholder": "Page text",
+        "style": "width: 600px",
+        "class": "form-control",
+        "rows": "20",
+        }))
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
