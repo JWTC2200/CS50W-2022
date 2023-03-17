@@ -1,0 +1,21 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Category: {{cat_name}}</h2>
+    <div>
+        {% for cat in category %}
+        <div class="card-columns">
+            {% if cat.item_image %}
+                <img class="card-img-top" src="{{cat.item_image}}">
+            {% else %}
+                <img class="card-img-top" src="https://media.istockphoto.com/id/1357365823/vector/default-image-icon-vector-missing-picture-page-for-website-design-or-mobile-app-no-photo.jpg?s=612x612&w=0&k=20&c=PM_optEhHBTZkuJQLlCjLz-v3zzxp-1mpNQZsdjrbns=" alt="No image provided">
+            {% endif %}
+            <div class="card-body">
+                <h5><a href="{% url 'listing' cat.id %}">{{cat.item_name}}</a></h5>
+                <p class="card-text">£{{cat.list_value}}</p>
+                <p class="card-text">{{cat.description}}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}
