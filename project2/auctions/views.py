@@ -7,7 +7,7 @@ from django import forms
 from django.forms import ModelForm
 from auctions.models import Listings
 
-from .models import User, Listings, Bids, Comments
+from .models import User, Listings, Bids, Comments, Watchlist
 
 class NewListingForm(ModelForm):
     def __init__(self, *args, **kwargs):
@@ -101,9 +101,28 @@ def create_listing(request):
         
 def listing_view(request, listing_id):
     listing = Listings.objects.get(pk=listing_id)
-    return render(request, "auctions/listing.html", {
-        "listing": listing,
-    })
+    if request.method == "POST" and 'watchlist_add' in request.POST:
+        user = request.user
+        item = Listings.objects.get(pk=listing_id)
+        # check if already in watchlist
+        watchlist_check = Watchlist.objects.filter(user=request.user).filter(watched_item=item).all()
+        if watchlist_check:
+            return render(request, "auctions/listing.html", {
+                "warning": "Already in watchlist",
+                "listing": listing,
+            })
+            # save to sql
+        sv = Watchlist(user=user, watched_item=item)
+        sv.save()            
+        return redirect("watchlist")
+    # submit bid
+    if request.method == "POST" and "submit_bid" in request.POST:
+        pass
+
+    else:
+        return render(request, "auctions/listing.html", {
+            "listing": listing,
+        })
     
 def categories(request):
     all_categories = Listings.objects.values_list("category", flat=True)
@@ -117,4 +136,17 @@ def category(request, category):
     return render(request, "auctions/category.html", {
         "category": cat_items,
         "cat_name": category,
+    })
+    
+def watchlist(request):
+    watchlist = Watchlist.objects.filter(user=request.user).all() 
+    value = "0"
+    if request.method == "POST":
+        value = request.POST.get("remove_watch", "")
+        entry = Watchlist.objects.filter(pk=value).all()
+        entry.delete()
+        
+    return render(request, "auctions/watchlist.html", {
+        "watching": watchlist,
+        "test": value,
     })

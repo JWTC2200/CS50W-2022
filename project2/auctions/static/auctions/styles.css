@@ -1,7 +1,6 @@
 body {
     padding: 10px;
 }
-.indeximage {
-    max-width: 120px;
-    height: auto;
+.button-right {
+    float: right;
 }
