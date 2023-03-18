@@ -26,6 +26,22 @@ class NewListingForm(ModelForm):
             'category': forms.TextInput(attrs={"class": "form-control"}),
             'list_value': forms.NumberInput(attrs={"class":"form-control"}),
         }
+        
+class BidForm(ModelForm):
+    class Meta:
+        model = Bids
+        fields = ["bid_value"]
+        widgets = {
+            "bid_value": forms.NumberInput(attrs={"class":"form-control"}),
+        }
+        
+class CommentForm(ModelForm):
+    class Meta:
+        model = Comments
+        fields = ["comment_text"]
+        widgets = {
+            "comment_text": forms.Textarea(attrs={"class":"form-control", "rows":"2"})
+        }
 
 def index(request):
     auctions = Listings.objects.exclude(status=False).all()
@@ -100,29 +116,54 @@ def create_listing(request):
         })
         
 def listing_view(request, listing_id):
+    # empty warnings
+    warning = ""
+    bidwarning = ""
     listing = Listings.objects.get(pk=listing_id)
+    comment_list = Comments.objects.filter(comment_item=listing_id)
+    # add to watchlist
     if request.method == "POST" and 'watchlist_add' in request.POST:
         user = request.user
         item = Listings.objects.get(pk=listing_id)
         # check if already in watchlist
         watchlist_check = Watchlist.objects.filter(user=request.user).filter(watched_item=item).all()
-        if watchlist_check:
-            return render(request, "auctions/listing.html", {
-                "warning": "Already in watchlist",
-                "listing": listing,
-            })
-            # save to sql
-        sv = Watchlist(user=user, watched_item=item)
-        sv.save()            
-        return redirect("watchlist")
+        if not watchlist_check:
+            sv = Watchlist(user=user, watched_item=item)
+            sv.save()            
+            return redirect("watchlist")
+        warning = "Already in watchlist"
     # submit bid
     if request.method == "POST" and "submit_bid" in request.POST:
+        form = BidForm(request.POST)
+        if form.is_valid():
+            save_form = form.save(commit=False)
+            if save_form.bid_value > listing.current_value:
+                save_form.bidder = request.user
+                save_form.bid_item = listing
+                # change current value
+                listing.current_value = save_form.bid_value
+                save_form.save()
+                listing.save()
+            else:
+                bidwarning = "Bid is too low"
         pass
+    # submit comment
+    if request.method == "POST" and "submit_comment" in request.POST:
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            save_form = form.save(commit=False)
+            save_form.commenter = request.user
+            save_form.comment_item = listing
+            save_form.save()
 
-    else:
-        return render(request, "auctions/listing.html", {
-            "listing": listing,
-        })
+    return render(request, "auctions/listing.html", {
+        "warning": warning,
+        "listing": listing,
+        "bidform": BidForm,
+        "bidwarning": bidwarning,
+        "commentform": CommentForm,
+        "comment_list": comment_list,
+    })
     
 def categories(request):
     all_categories = Listings.objects.values_list("category", flat=True)

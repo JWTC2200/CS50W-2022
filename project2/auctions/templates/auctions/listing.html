@@ -3,13 +3,13 @@
 {% block body %}
     <h1>Listing: {{listing.item_name}}</h1>
     {% if user.is_authenticated%}
-    <form action="" method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-success" name="watchlist_add">Add to watchlist</button>
-    </form>
-    {% if warning %}
-        <p>{{warning}}</p>
-    {% endif %}
+        <form action="" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success" name="watchlist_add">Add to watchlist</button>
+        </form>
+        {% if warning %}
+            <p>{{warning}}</p>
+        {% endif %}
     {% endif %}
     <br>
     {% if listing.item_image %}
@@ -17,21 +17,43 @@
     {% else %}
         <img class="indeximage" src="https://media.istockphoto.com/id/1357365823/vector/default-image-icon-vector-missing-picture-page-for-website-design-or-mobile-app-no-photo.jpg?s=612x612&w=0&k=20&c=PM_optEhHBTZkuJQLlCjLz-v3zzxp-1mpNQZsdjrbns=" alt="No image provided">
     {% endif %}
-    <h4>Current Price:</h4>
-    <p>£{{listing.current_value}}</p>
-    <h4>Description</h4>
     <p>{{listing.description}}</p>
-
-    <h4>Details</h4>
-    <li>Listed by {{listing.seller}}</li>
-    <li>Category: 
-        {% if listing.category%}
-            {{listing.category}}
-        {% else %}
-            No Category Listed
+    <h4>Current Price: £{{listing.current_value}}</h4>
+    {% if user.is_authenticated%}
+            <form action="" method="post">
+                {% csrf_token %}
+                {{ bidform }}
+                {% if bidwarning %}
+                    <p>{{bidwarning}}</p>
+                {% endif %}
+                <button type="submit" class="btn btn-primary" name="submit_bid">Place bid</button>
+            </form>
         {% endif %}
-
-    </li>
+    <h4>Details</h4>
+    <div>
+        <li>Listed by {{listing.seller}}</li>
+        <li>Category: 
+            {% if listing.category%}
+                {{listing.category}}
+            {% else %}
+                No Category Listed
+            {% endif %}
+        </li>
+    </div>
+    <div>
+    <h2>Comments</h2>
+        {% for comment in comment_list %}
+            <h5>{{comment.commenter.username}}:</h5>
+            <p>{{comment.comment_text}}</p> 
+        {% endfor %}
+        {% if user.is_authenticated%}
+            <form action="" method="post">
+                {% csrf_token %}
+                {{ commentform }}
+                <button type="submit" class="btn btn-primary" name="submit_comment">Add comment</button>
+            </form>
+        {% endif %}
+    </div>
 
 
 

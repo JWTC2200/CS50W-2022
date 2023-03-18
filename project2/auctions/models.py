@@ -18,7 +18,7 @@ class Listings(models.Model):
     current_value = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     
     def __str__(self):
-        return f"{self.item_name} for £{self.list_value}"
+        return f"Listing {self.pk}: {self.item_name} for {self.current_value}"
     
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -27,15 +27,14 @@ class Listings(models.Model):
 
 class Bids(models.Model):
     bidder = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    bid_item = models.ForeignKey("Listings", on_delete=models.CASCADE)
+    bid_item = models.ForeignKey("Listings", on_delete=models.CASCADE, default=0)
     bid_value = models.DecimalField(max_digits=11, decimal_places=2)
     
 class Watchlist(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     watched_item = models.ForeignKey('Listings', on_delete=models.CASCADE)
 
-
 class Comments(models.Model):
-    commenter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    comment_item = models.ForeignKey('Listings', on_delete=models.CASCADE)
-    comment_text = models.TextField(max_length=1000)
+    commenter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=0)
+    comment_item = models.ForeignKey('Listings', on_delete=models.CASCADE, default=0)
+    comment_text = models.TextField(max_length=1000, default="")
