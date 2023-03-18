@@ -6,6 +6,9 @@
         <p>{{test}}</p>
     {%endif%}
     <div>
+        {% if not watching %}
+        <h4>You are not watching any items</h4>
+        {% endif %}
         <div class="row row-cols-1 row-cols-2">
             {% for watch in watching %}
             <div class="col mb-4">

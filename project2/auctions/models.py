@@ -12,7 +12,7 @@ class Listings(models.Model):
     item_name = models.CharField(max_length=100)
     list_value = models.DecimalField(max_digits=11, decimal_places=2)
     description = models.TextField(max_length=1000)
-    item_image = models.URLField(max_length=250, default=None, null=True, blank=True)
+    item_image = models.URLField(max_length=500, default=None, null=True, blank=True)
     category = models.CharField(max_length=20, default=None, null=True,blank=True)
     status = models.BooleanField(default=True)
     current_value = models.DecimalField(max_digits=11, decimal_places=2, default=0)
@@ -26,7 +26,8 @@ class Listings(models.Model):
         super(Listings, self).save(*args, **kwargs)
 
 class Bids(models.Model):
-    bidder = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bidder")
+    bidder = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    bid_item = models.ForeignKey("Listings", on_delete=models.CASCADE)
     bid_value = models.DecimalField(max_digits=11, decimal_places=2)
     
 class Watchlist(models.Model):
@@ -35,4 +36,6 @@ class Watchlist(models.Model):
 
 
 class Comments(models.Model):
-    pass
+    commenter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    comment_item = models.ForeignKey('Listings', on_delete=models.CASCADE)
+    comment_text = models.TextField(max_length=1000)

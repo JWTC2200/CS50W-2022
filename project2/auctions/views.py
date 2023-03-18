@@ -148,5 +148,4 @@ def watchlist(request):
         
     return render(request, "auctions/watchlist.html", {
         "watching": watchlist,
-        "test": value,
     })
