@@ -45,6 +45,7 @@ class CommentForm(ModelForm):
         }
 
 def index(request):
+    # Show active listings
     auctions = Listings.objects.exclude(status=False).all()
     return render(request, "auctions/index.html", {
         "auctions": auctions,
@@ -102,6 +103,7 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
    
+   
 @login_required 
 def create_listing(request):
     if request.method == "POST":
@@ -116,6 +118,7 @@ def create_listing(request):
         return render(request, "auctions/listitem.html", {
             "NewListingForm": NewListingForm,
         })
+        
         
 def listing_view(request, listing_id):
     # empty warnings
@@ -182,6 +185,7 @@ def listing_view(request, listing_id):
         "comment_list": comment_list,
     })
     
+
 def categories(request):
     all_categories = Listings.objects.values_list("category", flat=True)
     category = sorted(set(all_categories), key=lambda x: (x is None, x))
@@ -189,12 +193,14 @@ def categories(request):
         "category": category,
     })
     
+    
 def category(request, category):
     cat_items = Listings.objects.filter(category=category).all()
     return render(request, "auctions/category.html", {
         "category": cat_items,
         "cat_name": category,
     })
+
 
 @login_required    
 def watchlist(request):

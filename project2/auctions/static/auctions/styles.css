@@ -1,6 +1,11 @@
 body {
     padding: 10px;
 }
+
 .button-right {
     float: right;
+}
+
+.index-image {
+    border-radius: 50%;
 }

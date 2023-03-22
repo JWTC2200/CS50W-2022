@@ -19,7 +19,7 @@ class Listings(models.Model):
     winner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=None, null=True, blank=True, related_name="winner")
     
     def __str__(self):
-        return f"Listing {self.pk}: {self.item_name} for {self.current_value}"
+        return f"Listing {self.pk}: {self.item_name} for £{self.current_value}"
     
     def save(self, *args, **kwargs):
         if not self.pk:
