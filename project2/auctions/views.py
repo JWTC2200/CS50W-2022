@@ -112,7 +112,7 @@ def create_listing(request):
             save_form = form.save(commit=False)
             save_form.seller = request.user
             save_form.save()
-            return redirect("index")
+            return redirect("listing", save_form.id)
             
     else:
         return render(request, "auctions/listitem.html", {

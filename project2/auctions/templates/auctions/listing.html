@@ -62,8 +62,7 @@
     <div>
     <h2>Comments</h2>
         {% for comment in comment_list %}
-            <h5>{{comment.commenter.username}}:</h5>
-            <p>{{comment.comment_text}}</p> 
+            <p><strong>{{comment.commenter.username}}:</strong> {{comment.comment_text}}</p> 
         {% endfor %}
         {% if user.is_authenticated%}
             <form action="" method="post">
