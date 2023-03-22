@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
@@ -100,7 +101,8 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
-    
+   
+@login_required 
 def create_listing(request):
     if request.method == "POST":
         form = NewListingForm(request.POST)
@@ -121,6 +123,7 @@ def listing_view(request, listing_id):
     bidwarning = ""
     listing = Listings.objects.get(pk=listing_id)
     comment_list = Comments.objects.filter(comment_item=listing_id)
+    bid_no = len(Bids.objects.filter(bid_item=listing_id).all())
     # add to watchlist
     if request.method == "POST" and 'watchlist_add' in request.POST:
         user = request.user
@@ -137,7 +140,12 @@ def listing_view(request, listing_id):
         form = BidForm(request.POST)
         if form.is_valid():
             save_form = form.save(commit=False)
-            if save_form.bid_value > listing.current_value:
+            last_bid = Bids.objects.filter(bid_item=listing).last()
+            if not last_bid:
+                last_bid = 0.00
+            else:
+                last_bid = last_bid.bid_value
+            if save_form.bid_value >= listing.current_value and save_form.bid_value > last_bid:
                 save_form.bidder = request.user
                 save_form.bid_item = listing
                 # change current value
@@ -146,7 +154,6 @@ def listing_view(request, listing_id):
                 listing.save()
             else:
                 bidwarning = "Bid is too low"
-        pass
     # submit comment
     if request.method == "POST" and "submit_comment" in request.POST:
         form = CommentForm(request.POST)
@@ -155,10 +162,20 @@ def listing_view(request, listing_id):
             save_form.commenter = request.user
             save_form.comment_item = listing
             save_form.save()
-
+    # close auction
+    if request.method == "POST" and "close_auction" in request.POST:
+        listing.status = False
+        if bid_no > 0:
+            winning_bid = Bids.objects.filter(bid_item=listing).last()
+            listing.winner = winning_bid.bidder
+        # save all changes
+        listing.save()
+            
+    test = Bids.objects.filter(bid_item=listing).last()
     return render(request, "auctions/listing.html", {
         "warning": warning,
         "listing": listing,
+        "bidno": bid_no,
         "bidform": BidForm,
         "bidwarning": bidwarning,
         "commentform": CommentForm,
@@ -178,7 +195,8 @@ def category(request, category):
         "category": cat_items,
         "cat_name": category,
     })
-    
+
+@login_required    
 def watchlist(request):
     watchlist = Watchlist.objects.filter(user=request.user).all() 
     value = "0"
