@@ -13,17 +13,24 @@ document.addEventListener('DOMContentLoaded', function() {
   load_mailbox('inbox');
 });
 
-function compose_email() {
+function compose_email(reply_data) {
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#email-table').style.display = 'none';
+  document.querySelector('#email-single').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';
   document.querySelector('#compose-subject').value = '';
   document.querySelector('#compose-body').value = '';
+
+  if (reply_data) {
+    document.querySelector('#compose-recipients').value = reply_data.sender;
+    document.querySelector('#compose-subject').value = `Re: ${reply_data.subject}`;
+    document.querySelector('#compose-body').value = `On ${reply_data.timestamp} ${reply_data.sender} wrote: ${reply_data.body}`;
+  }
 
   document.querySelector('#compose-form').addEventListener("submit", function(evt){
     evt.preventDefault();
@@ -57,8 +64,9 @@ function load_mailbox(mailbox) {
   
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
-  document.querySelector('#email=table').style.display = 'block';
+  document.querySelector('#email-table').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#email-single').style.display = 'none';
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
@@ -75,6 +83,9 @@ function load_mailbox(mailbox) {
     }
     if (mailbox === 'sent') {
       load_sentbox(emails)
+    }
+    if (mailbox === 'archive') {
+      load_archivebox(emails)
     }
 });
 }
@@ -107,16 +118,38 @@ function load_inbox(emails) {
         </div>`;
     }
     email_table.append(email_list);
-    email_list.addEventListener('click', () => open_email(email.id));
+    email_list.addEventListener('click', () => open_email(email.id, 'inbox'));
   });
 }
 
-function open_email(email_id) {
+function open_email(email_id, route) {
+  const inbox_buttons = document.querySelector('#inbox-buttons');
+
+  const reply_button = document.querySelector('#reply-button');
+  const archive_button = document.querySelector('#archive-button');
+
+  inbox_buttons.style.display = 'none';
+
   //get the email from id
   fetch(`emails/${email_id}`)
   .then(response => response.json())
   .then(email => {
-    console.log(email)
+    document.querySelector('#email-table').style.display = 'none';
+    document.querySelector('#email-single').style.display = 'block';
+
+    document.querySelector('#eview-sender').innerHTML = `From: ${email.sender}`;
+    document.querySelector('#eview-to').innerHTML = `To: ${email.recipients}`;
+    document.querySelector('#eview-subject').innerHTML = `Subject: ${email.subject}`;
+    document.querySelector('#eview-timestamp').innerHTML = `Timestamp: ${email.timestamp}`;
+    document.querySelector('#eview-body').innerHTML = `${email.body}`;
+
+    
+    if (route === 'inbox') {
+      inbox_buttons.style.display = 'block';
+    };
+    reply_button.addEventListener('click', () => compose_email(email));
+    archive_button.addEventListener('click', () => archiveEmail(email_id));
+    
   });
 }
 
@@ -139,4 +172,48 @@ function load_sentbox(emails) {
     email_table.append(email_list);
     email_list.addEventListener('click', () => open_email(email.id));
   })
+}
+
+function archiveEmail(email_id) {
+  // update archive status
+  fetch(`/emails/${email_id}`, {
+    method: 'PUT',
+    body: JSON.stringify ({
+      archived: true
+    })
+  })
+  load_mailbox('archive');
+}
+
+function load_archivebox(emails) {
+  // load headings
+  const email_table = document.querySelector('#email-table');
+  email_table.innerHTML = 
+  `<div class="row">
+    <div class="col">Sender</div>
+    <div class="col">Subject</div>
+    <div class="col">Date Recieved</div>     
+  </div>`;
+  emails.forEach(function (email) {
+    //add table
+    const email_list = document.createElement('a');
+    if (email.read === false) {
+       email_list.innerHTML= 
+        `<div class="row bg-light border border-light">
+          <div class="col">${email.sender}</div>
+          <div class="col">${email.subject}</div>
+          <div class="col">${email.timestamp}</div>
+        </div>`;
+    }
+    else {
+      `<div class="row bg-secondary border border-dark">
+          <div class="col">${email.sender}</div>
+          <div class="col">${email.subject}</div>
+          <div class="col">${email.timestamp}</div>
+        </div>`;
+    }
+    email_table.append(email_list);
+    email_list.addEventListener('click', () => open_email(email.id, 'inbox'));
+  });
+  
 }
