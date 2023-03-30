@@ -9,7 +9,6 @@
     <button class="btn btn-sm btn-outline-primary" id="sent">Sent</button>
     <button class="btn btn-sm btn-outline-primary" id="archived">Archived</button>
     <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
-    <button class="btn btn-sm btn-outline-warning" id="test">TESTBUTTON</button>
     <hr>
 
     <div id="emails-view"> 
@@ -24,6 +23,9 @@
         <div id="inbox-buttons">
             <button type="button" id="reply-button" class="btn btn-info">Send Reply</button>
             <button type="button" id="archive-button" class="btn btn-warning">Archive Email</button>
+        </div>
+        <div id="archive-buttons">
+            <button type="button" id="unarchive-button" class="btn btn-warning">Unarchive Email</button>
         </div>
         <div id="eview-body"></div>
     </div>
@@ -41,7 +43,7 @@
                 <input class="form-control" id="compose-subject" placeholder="Subject">
             </div>
             <textarea class="form-control" id="compose-body" placeholder="Body"></textarea>
-            <input id="submit" type="submit" class="btn btn-primary"/>
+            <input id="submit" type="submit" class="btn btn-primary" value="Send Email"/>
         </form>
     </div>
 {% endblock %}

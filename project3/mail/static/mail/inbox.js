@@ -5,15 +5,13 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
-  document.querySelector('#test').addEventListener('click', () => {
-    console.log(document.querySelector('#compose-body').value);
-  });
 
   // By default, load the inbox
   load_mailbox('inbox');
 });
 
 function compose_email(reply_data) {
+  console.log(reply_data);
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
@@ -26,7 +24,7 @@ function compose_email(reply_data) {
   document.querySelector('#compose-subject').value = '';
   document.querySelector('#compose-body').value = '';
 
-  if (reply_data) {
+  if (reply_data.sender != undefined) {
     document.querySelector('#compose-recipients').value = reply_data.sender;
     document.querySelector('#compose-subject').value = `Re: ${reply_data.subject}`;
     document.querySelector('#compose-body').value = `On ${reply_data.timestamp} ${reply_data.sender} wrote: ${reply_data.body}`;
@@ -36,28 +34,24 @@ function compose_email(reply_data) {
     evt.preventDefault();
   }, true);
 
-  // fetch
-  document.querySelector('input[type="submit"]').addEventListener('click', () => {
+  document.querySelector('#submit').addEventListener('click', send_email)
+}
 
-    let recipients = document.querySelector('#compose-recipients').value;
-    let subject = document.querySelector('#compose-subject').value;
-    let body = document.querySelector("#compose-body").value;
+function send_email() {
+  let recipients = document.querySelector('#compose-recipients').value;
+  let subject = document.querySelector('#compose-subject').value;
+  let body = document.querySelector("#compose-body").value;
 
-    console.log(subject);
-  
-    fetch('/emails', {
-    method: 'POST',
-    body: JSON.stringify({
-        recipients: `${recipients}`,
-        subject: `${subject}`,
-        body: `${body}`
-        })
-    })
-    .then(response => response.json())
-    .then(()=>load_mailbox('sent'));
-  });
-
-
+  fetch('/emails', {
+  method: 'POST',
+  body: JSON.stringify({
+      recipients: `${recipients}`,
+      subject: `${subject}`,
+      body: `${body}`
+      })
+  })
+  .then(response => response.json())
+  .then(()=>load_mailbox('sent'));
 }
 
 function load_mailbox(mailbox) {
@@ -93,7 +87,11 @@ function load_mailbox(mailbox) {
 function load_inbox(emails) {
   // load headings
   const email_table = document.querySelector('#email-table');
-  email_table.innerHTML = 
+  if (emails.length === 0) {
+    email_table.innerHTML = "You have no emails in your inbox folder"
+  }
+  else {
+    email_table.innerHTML = 
   `<div class="row">
     <div class="col">Sender</div>
     <div class="col">Subject</div>
@@ -104,31 +102,44 @@ function load_inbox(emails) {
     const email_list = document.createElement('a');
     if (email.read === false) {
        email_list.innerHTML= 
-        `<div class="row bg-light border border-light">
+        `<div class="row bg-light border border-dark">
           <div class="col">${email.sender}</div>
           <div class="col">${email.subject}</div>
           <div class="col">${email.timestamp}</div>
         </div>`;
     }
     else {
+      email_list.innerHTML=
       `<div class="row bg-secondary border border-dark">
           <div class="col">${email.sender}</div>
           <div class="col">${email.subject}</div>
           <div class="col">${email.timestamp}</div>
         </div>`;
+
     }
     email_table.append(email_list);
     email_list.addEventListener('click', () => open_email(email.id, 'inbox'));
   });
+  }
 }
 
 function open_email(email_id, route) {
   const inbox_buttons = document.querySelector('#inbox-buttons');
-
   const reply_button = document.querySelector('#reply-button');
   const archive_button = document.querySelector('#archive-button');
+  const archive_buttons = document.querySelector('#archive-buttons');
+  const unarchive_button = document.querySelector('#unarchive-button');
 
   inbox_buttons.style.display = 'none';
+  archive_buttons.style.display = 'none';
+
+  // set email to read
+  fetch(`/emails/${email_id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      read: true
+    })
+  })
 
   //get the email from id
   fetch(`emails/${email_id}`)
@@ -142,78 +153,82 @@ function open_email(email_id, route) {
     document.querySelector('#eview-subject').innerHTML = `Subject: ${email.subject}`;
     document.querySelector('#eview-timestamp').innerHTML = `Timestamp: ${email.timestamp}`;
     document.querySelector('#eview-body').innerHTML = `${email.body}`;
-
     
     if (route === 'inbox') {
       inbox_buttons.style.display = 'block';
     };
+    if (route === 'archive') {
+      archive_buttons.style.display = 'block';
+    }
     reply_button.addEventListener('click', () => compose_email(email));
-    archive_button.addEventListener('click', () => archiveEmail(email_id));
+    archive_button.addEventListener('click', () => archiveEmail(email_id, true));
+    unarchive_button.addEventListener('click', () => archiveEmail(email_id, false));
     
   });
 }
 
 function load_sentbox(emails) {
   const email_table = document.querySelector('#email-table');
-  email_table.innerHTML = 
-  `<div class="row">
-    <div class="col">Recipient</div>
-    <div class="col">Subject</div>
-    <div class="col">Date Sent</div>     
-  </div>`;
-  emails.forEach(function (email) {
-    const email_list = document.createElement('a');
-    email_list.innerHTML= 
-      `<div class="row bg-light border border-light">
-        <div class="col">${email.recipients}</div>
-        <div class="col">${email.subject}</div>
-        <div class="col">${email.timestamp}</div>
+  if (emails.length === 0) {
+    email_table.innerHTML = "You have no emails in your sent folder"
+  }
+  else {
+    email_table.innerHTML = 
+      `<div class="row">
+        <div class="col">Recipient</div>
+        <div class="col">Subject</div>
+        <div class="col">Date Sent</div>     
       </div>`;
-    email_table.append(email_list);
-    email_list.addEventListener('click', () => open_email(email.id));
-  })
+    emails.forEach(function (email) {
+      const email_list = document.createElement('a');
+      email_list.innerHTML= 
+        `<div class="row bg-light border border-light">
+          <div class="col">${email.recipients}</div>
+          <div class="col">${email.subject}</div>
+          <div class="col">${email.timestamp}</div>
+        </div>`;
+      email_table.append(email_list);
+      email_list.addEventListener('click', () => open_email(email.id));
+    })
+  }
+  
 }
 
-function archiveEmail(email_id) {
+function archiveEmail(email_id, command) {
   // update archive status
   fetch(`/emails/${email_id}`, {
     method: 'PUT',
     body: JSON.stringify ({
-      archived: true
+      archived: command
     })
   })
-  load_mailbox('archive');
+  load_mailbox('inbox');
 }
 
 function load_archivebox(emails) {
-  // load headings
   const email_table = document.querySelector('#email-table');
-  email_table.innerHTML = 
-  `<div class="row">
-    <div class="col">Sender</div>
-    <div class="col">Subject</div>
-    <div class="col">Date Recieved</div>     
-  </div>`;
-  emails.forEach(function (email) {
-    //add table
-    const email_list = document.createElement('a');
-    if (email.read === false) {
-       email_list.innerHTML= 
+  console.log(emails);
+  if (emails.length === 0) {
+    email_table.innerHTML = "You have no emails in your archive folder"
+  }
+  else {
+    email_table.innerHTML = 
+      `<div class="row">
+        <div class="col">Sender</div>
+        <div class="col">Subject</div>
+        <div class="col">Date Recieved</div>     
+      </div>`;
+    emails.forEach(function (email) {
+      //add table
+      const email_list = document.createElement('a');
+      email_list.innerHTML= 
         `<div class="row bg-light border border-light">
           <div class="col">${email.sender}</div>
           <div class="col">${email.subject}</div>
           <div class="col">${email.timestamp}</div>
         </div>`;
-    }
-    else {
-      `<div class="row bg-secondary border border-dark">
-          <div class="col">${email.sender}</div>
-          <div class="col">${email.subject}</div>
-          <div class="col">${email.timestamp}</div>
-        </div>`;
-    }
-    email_table.append(email_list);
-    email_list.addEventListener('click', () => open_email(email.id, 'inbox'));
-  });
-  
+      email_table.append(email_list);
+      email_list.addEventListener('click', () => open_email(email.id, 'archive'));
+    });
+  }  
 }
