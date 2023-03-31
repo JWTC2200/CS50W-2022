@@ -110,7 +110,7 @@ function load_inbox(emails) {
     }
     else {
       email_list.innerHTML=
-      `<div class="row bg-secondary border border-dark">
+      `<div class="row text-white bg-secondary border border-dark">
           <div class="col">${email.sender}</div>
           <div class="col">${email.subject}</div>
           <div class="col">${email.timestamp}</div>
