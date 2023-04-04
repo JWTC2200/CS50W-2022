@@ -98,11 +98,11 @@ function load_inbox(emails) {
     <div class="col">Date Recieved</div>     
   </div>`;
   emails.forEach(function (email) {
-    //add table
+    //add s
     const email_list = document.createElement('a');
     if (email.read === false) {
        email_list.innerHTML= 
-        `<div class="row bg-light border border-dark">
+        `<div class="row bg-light border border-dark link-secondary">
           <div class="col">${email.sender}</div>
           <div class="col">${email.subject}</div>
           <div class="col">${email.timestamp}</div>
@@ -110,7 +110,7 @@ function load_inbox(emails) {
     }
     else {
       email_list.innerHTML=
-      `<div class="row text-white bg-secondary border border-dark">
+      `<div class="row text-white bg-secondary border border-dark link-light">
           <div class="col">${email.sender}</div>
           <div class="col">${email.subject}</div>
           <div class="col">${email.timestamp}</div>
