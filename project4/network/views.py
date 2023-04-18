@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import User, Posts, Follows
 
 
 def index(request):
@@ -61,3 +61,18 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+    
+def user(request):
+    if request.method == "POST":
+        post_content = request.POST["post-content"]
+        if len(post_content) > 0:
+            Posts(user=request.user, content=post_content).save()
+        return render(request, "network/user.html")    
+        
+            
+    
+    else:
+        return render(request, "network/user.html")
+
+def following(request):
+    return render(request, "network/following.html")

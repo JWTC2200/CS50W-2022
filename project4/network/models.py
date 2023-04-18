@@ -17,6 +17,9 @@ class Posts(models.Model):
     class Meta:
         ordering = ['-datetime']
         
+    def __str__(self):
+        return f"{self.user}: {self.content}"
+        
 class Follows(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     following = models.ManyToManyField(User, symmetrical=False, blank=True, related_name="following")
