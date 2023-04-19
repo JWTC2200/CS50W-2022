@@ -11,4 +11,15 @@
             <input class="btn btn-primary" type="submit" class="form-control" value="Create Post">
         </form>
     </div>
+    {% for post in user_posts %}
+        <div>
+            <h3>{{post.user}}</h3>
+            <p>{{post.content}}</p>
+            <p>{{post.datetime}}</p>
+            {% if request.user == post.user %}
+                <p>EDIT</p>
+            {% endif %}
+        </div>
+    {% endfor %}
+
 {% endblock %}
