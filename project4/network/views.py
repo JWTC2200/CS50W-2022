@@ -1,10 +1,11 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
+import json
 
 from .models import User, Posts, Follows
 
@@ -95,3 +96,16 @@ def new_post(request):
 @login_required
 def following(request):
     return render(request, "network/following.html")
+
+@login_required
+def likepost(request, post_id):
+    post = Posts.objects.get(pk=post_id)
+    data = json.loads(request.body)
+    if data.get("likes") == "liked":
+        post.likes.remove(request.user)
+    if data.get("likes") == "like":
+        post.likes.add(request.user)
+        
+    return JsonResponse({"message": "Like status changed successfully"}, status=201)
+                
+

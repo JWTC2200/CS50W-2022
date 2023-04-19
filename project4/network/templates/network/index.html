@@ -5,10 +5,29 @@
     {% for post in all_posts%}
         <div>
             <h3><a href="{% url 'user' post.user.username %}">{{post.user}}</a></h3>
-            <p>{{post.content}}</p>
-            <p>{{post.datetime}}</p>
+            <div>{{post.content}}</div>
+            <div>{{post.datetime}}</div>
             {% if request.user == post.user %}
-                <p>EDIT</p>
+                <div>EDIT</div>
+            {% endif %}
+            {% if not post.user == user %}
+                <div onclick=myFunction(this.id) id={{post.pk}} data-value="{% if user in post.likes %}liked{% else %}like{% endif %}">
+                    ❤ 
+                    {% if post.likecount %}
+                    {{post.likecount}}
+                    {% else %}
+                        0
+                    {% endif %}
+                </div>
+            {% else %}
+                <div>
+                    ❤ 
+                    {% if post.likecount %}
+                    {{post.likecount}}
+                    {% else %}
+                        0
+                    {% endif %}
+                </div>
             {% endif %}
         </div>
     {% endfor %}

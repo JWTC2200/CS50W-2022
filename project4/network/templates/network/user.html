@@ -9,14 +9,38 @@
     </div>
 
     {% for post in user_posts %}
-        <div>
-            <h3>{{post.user}}</h3>
-            <p>{{post.content}}</p>
-            <p>{{post.datetime}}</p>
-            {% if request.user == post.user %}
-                <p>EDIT</p>
-            {% endif %}
-        </div>
+    <div>
+        <h3><a href="{% url 'user' post.user.username %}">{{post.user}}</a></h3>
+        <div>{{post.content}}</div>
+        <div>{{post.datetime}}</div>
+        {% if request.user == post.user %}
+            <div>EDIT</div>
+        {% endif %}
+        {% if not post.user == user %}
+            <div class=
+                "{% if user in post.likes %}
+                    liked-post 
+                {% else %} 
+                    like-post
+                {% endif %}">
+                ❤  
+                {% if post.likecount %}
+                {{post.likecount}}
+                {% else %}
+                    0
+                {% endif %}
+            </div>
+        {% else %}
+            <div>
+                ❤  
+                {% if post.likecount %}
+                {{post.likecount}}
+                {% else %}
+                    0
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
     {% endfor %}
 
 {% endblock %}
