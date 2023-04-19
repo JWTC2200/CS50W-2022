@@ -73,18 +73,24 @@ def register(request):
 
 @login_required
 def user(request, profile):
-    if request.method == "POST":
-        post_content = request.POST["post-content"]
-        if len(post_content) > 0:
-            Posts(user=request.user, content=post_content).save()
-    
     user_profile = User.objects.get(username=profile)
     user_posts = Posts.objects.filter(user=user_profile)
     
 
     return render(request, "network/user.html", {
         "user_posts": user_posts,
+        "profile_name": profile,
     })    
+
+@login_required
+def new_post(request):
+    if request.method == "POST":
+        post_content = request.POST["post-content"]
+        if len(post_content) > 0:
+            Posts(user=request.user, content=post_content).save()
+    
+    return render(request, "network/newpost.html")
+    
         
 @login_required
 def following(request):
