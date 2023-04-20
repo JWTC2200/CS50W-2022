@@ -3,17 +3,20 @@ function myFunction(id) {
   }
 
 function likePost(id) {
-  console.log("hello");
-  
+  const like_id = id.replace("like","")
   fetch('/likepost',  {
     method: 'PUT',
     body: JSON.stringify({
-      id: id,
+      id: like_id,
     })
   })
   .then(response => response.json())
   .then(response => {
-    console.log(response)
+    const like_total = response["count"]
+    console.log(like_total);
+    const like_html = document.querySelector(`#${id}`)
+    console.log(like_html);
+    like_html.innerHTML = `❤ ${like_total}`
   } );
 
   

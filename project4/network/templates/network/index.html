@@ -11,7 +11,7 @@
                 <div>EDIT</div>
             {% endif %}
             {% if not post.user == user %}
-                <div onclick=likePost(this.id) id={{post.pk}}>
+                <div onclick=likePost(this.id) id=like{{post.pk}}>
                     ❤ 
                     {% if post.LikeCount > 0 %}
                     {{post.LikeCount}}
