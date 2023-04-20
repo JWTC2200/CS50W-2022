@@ -1,6 +1,15 @@
 function myFunction() {
-  follow_text = document.querySelector("#follow-button").innerHTML
-  console.log(follow_text);
+  user_name = document.querySelector("#user_name").innerHTML
+  console.log(user_name);
+
+  fetch('/following', {
+    method: "PUT",
+    body: JSON.stringify({
+      to_follow: user_name,
+    })
+  })
+  .then(response => response.json())
+  console.log(response);
   }
 
 function likePost(id) {
