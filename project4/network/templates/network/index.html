@@ -1,7 +1,7 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    TODO index
+    <button class="btn btn-primary" onclick=myFunction(1)>TEST</button>
     {% for post in all_posts%}
         <div>
             <h3><a href="{% url 'user' post.user.username %}">{{post.user}}</a></h3>
@@ -11,10 +11,10 @@
                 <div>EDIT</div>
             {% endif %}
             {% if not post.user == user %}
-                <div onclick=myFunction(this.id) id={{post.pk}} data-value="{% if user in post.likes %}liked{% else %}like{% endif %}">
+                <div onclick=likePost(this.id) id={{post.pk}}>
                     ❤ 
-                    {% if post.likecount %}
-                    {{post.likecount}}
+                    {% if post.LikeCount > 0 %}
+                    {{post.LikeCount}}
                     {% else %}
                         0
                     {% endif %}

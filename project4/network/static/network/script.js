@@ -1,10 +1,20 @@
 function myFunction(id) {
-  const like_status = document.getElementById(id).dataset.value
-
-  alert(`${id} ${like_status} Hello from a static file!`);
+  alert(`${id} Hello from a static file!`);
   }
 
 function likePost(id) {
-  const like_status = document.getElementById(id).dataset.value
+  console.log("hello");
+  
+  fetch('/likepost',  {
+    method: 'PUT',
+    body: JSON.stringify({
+      id: id,
+    })
+  })
+  .then(response => response.json())
+  .then(response => {
+    console.log(response)
+  } );
 
+  
 }

@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 import json
 
 from .models import User, Posts, Follows
@@ -97,15 +98,20 @@ def new_post(request):
 def following(request):
     return render(request, "network/following.html")
 
+@csrf_exempt
 @login_required
-def likepost(request, post_id):
-    post = Posts.objects.get(pk=post_id)
+def likepost(request):
+
     data = json.loads(request.body)
-    if data.get("likes") == "liked":
-        post.likes.remove(request.user)
-    if data.get("likes") == "like":
-        post.likes.add(request.user)
-        
-    return JsonResponse({"message": "Like status changed successfully"}, status=201)
+    post_id = data.get("id")
+    post = Posts.objects.get(pk=post_id)
+    liker = User.objects.get(username=request.user.username)
+
+    if post.likes.filter(username=liker):
+        post.likes.remove(liker)
+    else:
+        post.likes.add(liker)
+    
+    return JsonResponse({"count": post.LikeCount()}, safe=True)
                 
 
