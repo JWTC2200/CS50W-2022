@@ -153,6 +153,14 @@ def following(request):
          "follow_count": follower_count, 
         }, safe=True)
     
+@login_required
+def followed_posts(request):
+    follows = User.objects.filter(followers=request.user)
+    followed_posts = Posts.objects.filter(user__in=follows)
+    return render(request, "network/following.html", {
+        "followed_posts": followed_posts,
+    })
+    
     
     
                 
