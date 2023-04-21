@@ -78,10 +78,24 @@ def user(request, profile):
     user_profile = User.objects.get(username=profile)
     user_posts = Posts.objects.filter(user=user_profile)
     
-
+    # check if user is already followed
+    follow_btn = ""
+    if user_profile != request.user:
+        if request.user in user_profile.followers.all():
+            follow_btn = "UNFOLLOW"
+        else:
+            follow_btn = "FOLLOW"
+            
+    # user following and follower counts
+    follow_count = user_profile.follows_count()
+    follower_count = user_profile.followers_count()
+    
     return render(request, "network/user.html", {
         "user_posts": user_posts,
         "profile_name": profile,
+        "follow_btn": follow_btn,
+        "follow_count": follow_count,
+        "follower_count": follower_count,
     })    
 
 @login_required
@@ -117,41 +131,29 @@ def likepost(request):
 @csrf_exempt
 @login_required
 def following(request):
+    
+    follow_status = ""
+    
     data = json.loads(request.body)
     to_follow = data.get("to_follow")
-    # create new user if not already exists
-    try:
-        user_follows = Follows.objects.get(user=request.user)
-    except Follows.DoesNotExist:
-        new_follow = Follows(user=request.user)
-        new_follow.save()
-    #create target to follow if not already exists
-    try:
-        target = User.objects.get(username=to_follow)
-        target_follow = Follows.objects.get(user=target)
-    except Follows.DoesNotExist:
-        new_follow = Follows(user=target)
-        new_follow.save()
-       
-    following_list = Follows.objects.get(user=request.user)
-    target_list = Follows.objects.get(user=User.objects.get(username=to_follow))
+    target_account = User.objects.get(username=to_follow)
     
-    # list of current follows
-    check_follow = following_list.following.all()
-    to_follow = User.objects.get(username=to_follow)
-
-    # Add/remove each other from followed/followedby lists
-    if to_follow in check_follow:
-        following_list.following.remove(to_follow)
-        target_list.followedby.remove(request.user)
+    if request.user in target_account.followers.all():
+        target_account.followers.remove(request.user)
+        follow_status = "FOLLOW"
     else:
-        following_list.following.add(to_follow)
-        target_list.followedby.add(request.user)
-    # updated list
-    check_follow2 = following_list.following.all()
-    target_list2 = Follows.objects.get(user=User.objects.get(username=to_follow)).followedby.all()
-    
+        target_account.followers.add(request.user)
+        follow_status = "UNFOLLOW"
 
+    follower_count = target_account.followers_count()
+    print(f"{target_account.followers.all()}")
+    
+    return JsonResponse(
+        {"follow_status": follow_status,
+         "follow_count": follower_count, 
+        }, safe=True)
+    
+    
     
                 
 

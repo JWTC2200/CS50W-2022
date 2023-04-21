@@ -1,17 +1,19 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    <button class="btn btn-primary" onclick=myFunction()>TEST</button>
     <div>
         <h1 id="user_name">{{ profile_name }}</h1>
+        <div>Following: {{ follow_count }}</div>
+        <div id="follow-count">Followers: {{ follower_count }}</div>
         {% if not profile_name == request.user.username %}
-        <button class="btn btn-primary" id="follow-button">FOLLOW</button>
+        <button class="btn btn-primary" id="follow-button" onclick=followUser()>{{follow_btn}}</button>
         {% endif %}
     </div>
 
     {% for post in user_posts %}
         <div>
             <h3><a href="{% url 'user' post.user.username %}">{{post.user}}</a></h3>
+
             <div>{{post.content}}</div>
             <div>{{post.datetime}}</div>
             {% if request.user == post.user %}
