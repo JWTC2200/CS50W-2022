@@ -1,9 +1,31 @@
+// create csrf token
+
+const csrftoken = getCookie('csrftoken');
+
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+          }
+      }
+  }
+  return cookieValue;
+}
+
+
 function followUser() {
   user_name = document.querySelector("#user_name").innerHTML
   console.log("test");
 
   fetch('/following', {
     method: "PUT",
+    headers: {'X-CSRFToken': csrftoken},
     body: JSON.stringify({
       to_follow: user_name,
     })
@@ -21,11 +43,13 @@ function followUser() {
   });
 }
 
+
 function likePost(id) {
   const like_id = id.replace("like","")
 
   fetch('/likepost',  {
     method: 'PUT',
+    headers: {'X-CSRFToken': csrftoken},
     body: JSON.stringify({
       id: like_id,
     })
@@ -37,6 +61,7 @@ function likePost(id) {
     like_html.innerHTML = `❤ ${like_total}`
   } );
 }
+
 
 function editPost(id) {
   id_no = id.replace("edit","")
@@ -59,10 +84,11 @@ function editPost(id) {
 }
 
 function submitEdit(id) {
+
   new_content = document.querySelector(`#newcontent${id}`).value
-  console.log(new_content)
   fetch("/editpost", {
     method: "PUT",
+    headers: {'X-CSRFToken': csrftoken},
     body: JSON.stringify({
       "post_id": id,
       "new_content": new_content
@@ -70,7 +96,6 @@ function submitEdit(id) {
   })
   .then(response => response.json())
   .then(response => {
-    console.log(response["new_content"])
     content = document.querySelector(`#content${id}`)
     edit_button = document.querySelector(`#edit${id}`)
     edit_box = document.querySelector(`#editbox${id}`)
@@ -89,5 +114,6 @@ function submitEdit(id) {
   })
 
 }
-  
+
+
   
