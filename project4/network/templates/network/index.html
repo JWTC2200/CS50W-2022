@@ -5,13 +5,18 @@
     {% for post in all_posts%}
         <div>
             <h3><a href="{% url 'user' post.user.username %}">{{post.user}}</a></h3>
-            <div>{{post.content}}</div>
+            <div id="content{{post.pk}}">{{post.content}}</div>
+            <div id="editbox{{post.pk}}" hidden>
+                <textarea maxlength="280" id="newcontent{{post.pk}}">{{post.content}}</textarea>
+                <button onclick=submitEdit({{post.pk}})>Save</button>
+            </div>
+
             <div>{{post.datetime}}</div>
             {% if request.user == post.user %}
-                <div>EDIT</div>
+                <button id="edit{{post.pk}}" onclick=editPost(this.id)>EDIT</button>
             {% endif %}
             {% if not post.user == user %}
-                <div onclick=likePost(this.id) id=like{{post.pk}}>
+                <div onclick=likePost(this.id) id="like{{post.pk}}">
                     ❤ 
                     {% if post.LikeCount > 0 %}
                     {{post.LikeCount}}

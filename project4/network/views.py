@@ -13,7 +13,7 @@ from .models import User, Posts, Follows
 
 def index(request):
     all_posts = Posts.objects.all()
-    paginator_all = Paginator(all_posts, 3)
+    paginator_all = Paginator(all_posts, 10)
     page_number = 1
     if request.GET.get("page") != None:
         page_number = request.GET.get("page")
@@ -77,6 +77,10 @@ def register(request):
 def user(request, profile):
     user_profile = User.objects.get(username=profile)
     user_posts = Posts.objects.filter(user=user_profile)
+    user_posts = Paginator(user_posts, 10)
+    page = 1   
+    if request.GET.get("page") != None:
+        page = request.GET.get("page")
     
     # check if user is already followed
     follow_btn = ""
@@ -91,7 +95,7 @@ def user(request, profile):
     follower_count = user_profile.followers_count()
     
     return render(request, "network/user.html", {
-        "user_posts": user_posts,
+        "user_posts": user_posts.page(page),
         "profile_name": profile,
         "follow_btn": follow_btn,
         "follow_count": follow_count,
@@ -104,6 +108,7 @@ def new_post(request):
         post_content = request.POST["post-content"]
         if len(post_content) > 0:
             Posts(user=request.user, content=post_content).save()
+            return HttpResponseRedirect(reverse("index"))
     
     return render(request, "network/newpost.html")
     
@@ -157,8 +162,35 @@ def following(request):
 def followed_posts(request):
     follows = User.objects.filter(followers=request.user)
     followed_posts = Posts.objects.filter(user__in=follows)
+    followed_posts = Paginator(followed_posts, 10)
+    page = 1
+    if request.GET.get("page") != None:
+        page = request.GET.get("page")
     return render(request, "network/following.html", {
-        "followed_posts": followed_posts,
+        "followed_posts": followed_posts.page(page),
+    })
+
+@csrf_exempt
+@login_required
+def editpost(request):
+    
+    data = json.loads(request.body)
+    post_id = data.get("post_id")
+    new_content = data.get("new_content")
+    print(post_id)
+    print( new_content)
+    # checks
+    if len(new_content) > 280:
+        return HttpResponse(404)
+    if len(new_content) <= 0:
+        return HttpResponse(404)
+    
+    post = Posts.objects.get(pk=post_id)
+    post.content = new_content
+    post.save()
+    
+    return JsonResponse({
+        "new_content": new_content,
     })
     
     
