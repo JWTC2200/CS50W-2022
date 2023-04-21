@@ -2,46 +2,51 @@
 
 {% block body %}
     <div>
-        <h1 id="user_name">{{ profile_name }}</h1>
+        <h2 id="user_name">{{ profile_name }}</h2>
+        <hr>
         <div>Following: {{ follow_count }}</div>
         <div id="follow-count">Followers: {{ follower_count }}</div>
+        <hr>
         {% if not profile_name == request.user.username %}
         <button class="btn btn-primary" id="follow-button" onclick=followUser()>{{follow_btn}}</button>
         {% endif %}
     </div>
 
     {% for post in user_posts %}
-        <div>
-            <h3><a href="{% url 'user' post.user.username %}">{{post.user}}</a></h3>
-            <div id="content{{post.pk}}">{{post.content}}</div>
-            <div id="editbox{{post.pk}}" hidden>
-                <textarea maxlength="280" id="newcontent{{post.pk}}">{{post.content}}</textarea>
-                <button onclick=submitEdit({{post.pk}})>Save</button>
-            </div>
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h3 class="card-title"><a href="{% url 'user' post.user.username %}">{{post.user}}</a></h3>
+                <div class="card-header"  id="content{{post.pk}}">{{post.content}}</div>
+                <div id="editbox{{post.pk}}" hidden>
+                    <textarea maxlength="280" id="newcontent{{post.pk}}">{{post.content}}</textarea>
+                    <br>
+                    <button class="btn btn-light" onclick=submitEdit({{post.pk}})>Save</button>
+                </div>
 
-            <div>{{post.datetime}}</div>
-            {% if request.user == post.user %}
-                <button id="edit{{post.pk}}" onclick=editPost(this.id)>EDIT</button>
-            {% endif %}
-            {% if not post.user == user %}
-                <div onclick=likePost(this.id) id="like{{post.pk}}">
-                    ❤ 
-                    {% if post.LikeCount > 0 %}
-                    {{post.LikeCount}}
-                    {% else %}
-                        0
-                    {% endif %}
-                </div>
-            {% else %}
-                <div>
-                    ❤ 
-                    {% if post.likecount %}
-                    {{post.likecount}}
-                    {% else %}
-                        0
-                    {% endif %}
-                </div>
-            {% endif %}
+                <div>{{post.datetime}}</div>
+                {% if request.user == post.user %}
+                    <button id="edit{{post.pk}}" onclick=editPost(this.id) class="btn btn-warning">EDIT</button>
+                {% endif %}
+                {% if not post.user == user %}
+                    <div onclick=likePost(this.id) id="like{{post.pk}}">
+                        ❤ 
+                        {% if post.LikeCount > 0 %}
+                        {{post.LikeCount}}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div>
+                        ❤ 
+                        {% if post.likecount %}
+                        {{post.likecount}}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
         </div>
     {% endfor %}
 
