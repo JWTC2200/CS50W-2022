@@ -74,10 +74,12 @@ function editPost(id) {
   // hide/show content/edit box
   if (edit_button.innerHTML === "EDIT") {
     edit_box.hidden = false;
+    content.hidden = true;
     edit_button.innerHTML = "CANCEL";
   }
   else {
     edit_box.hidden = true;
+    content.hidden = false;
     edit_button.innerHTML = "EDIT"
   }
 
