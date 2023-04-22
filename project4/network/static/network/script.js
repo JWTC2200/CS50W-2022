@@ -111,6 +111,7 @@ function submitEdit(id) {
       edit_button.innerHTML = "EDIT"
     }
     content.innerHTML = response["new_content"]
+    content.hidden= false;
     new_content.innerHTML = response["new_content"]
   
   })
