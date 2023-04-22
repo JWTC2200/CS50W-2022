@@ -1,13 +1,18 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-
+<div class="container">
+    <div class="row align-items-center">
     <h2>Your followed posts:</h2>
     <hr>
     {% if not followed_posts%}
         <h3>No follows</h3>
     {% endif %}
-    
+</div>
+</div>
+
+    <div class="container">
+        <div class="row align-items-center">
     {% for post in followed_posts %}
         <div class="card-columns">
             <div class="card bg-light" style="width: 18rem;">
@@ -47,7 +52,11 @@
             </div>
         </div>
     {% endfor %}
+</div>
+</div>
 
+    <div class="container">
+        <div class="row align-items-center">
     <div>
         <nav aria-label="Page navigation">
             <ul class="pagination">
@@ -63,5 +72,7 @@
             </ul>
         </nav>
     </div>
+</div>
+</div>
 
 {% endblock %}
