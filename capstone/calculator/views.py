@@ -56,3 +56,6 @@ def register(request):
         return redirect("index")
     else: 
         return render(request, "calculator/register.html")
+    
+def artifacts(request):
+    return render(request, "calculator/artifacts.html")
