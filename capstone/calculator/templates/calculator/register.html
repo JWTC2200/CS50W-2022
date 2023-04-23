@@ -6,7 +6,7 @@
             <div class="mx-auto col-10 col-md-8 col-lg-6">
                 <h1>Register</h1>
                 {% if message %}
-                    <div>{{ message }}</div>
+                    <div class="text-warning">{{ message }}</div>
                 {% endif %}
                 <form class="form-example" action="{% url 'register' %}" method="post">
                     {% csrf_token %}

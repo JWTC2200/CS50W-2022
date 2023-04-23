@@ -1,11 +1,11 @@
-from django.shortcuts import render
 from django.db import IntegrityError
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
 import json
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
+
 
 from .models import User
 
@@ -41,6 +41,18 @@ def register(request):
         email = request.POST["email"]
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
+        if not username:
+            return render(request, "calculator/register.html",  {
+                "message": "Please enter a username"
+            })
+        if not email:
+            return render(request, "calculator/register.html",  {
+                "message": "Please enter a email"
+            })
+        if not password:
+            return render(request, "calculator/register.html",  {
+                "message": "Please enter a password"
+            })
         if password != confirmation:
             return render(request, "calculator/register.html",  {
                 "message": "Passwords must match"
@@ -56,6 +68,7 @@ def register(request):
         return redirect("index")
     else: 
         return render(request, "calculator/register.html")
-    
+
+@login_required    
 def artifacts(request):
     return render(request, "calculator/artifacts.html")

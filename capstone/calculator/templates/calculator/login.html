@@ -7,7 +7,7 @@
             <div class="mx-auto col-10 col-md-8 col-lg-6">
                 <h1>Login</h1>
                 {% if message %}
-                    <p>{{message}}</p>
+                    <div class="text-warning">{{message}}</div>
                 {% endif %}
                 <form class="form-example" action="{% url 'login' %}" method="post">
                     {% csrf_token %}
