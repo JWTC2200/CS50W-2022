@@ -1,7 +1,3 @@
-document.addEventListener('DOMContentLoaded', fucntion() {
-
-})
-
 
 function show_block() {
     console.log(document.querySelector('#artifact-stat-block'))
