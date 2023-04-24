@@ -1,0 +1,47 @@
+{% extends "heresy/layout.html" %}
+
+
+{% block body %}
+
+    <div class="row">
+        <div class="mx-auto col-10 col-md-8 col-lg6">
+            <h1>List builder</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <h2>Units</h2>
+            <div>
+                <div class="row">
+                    <div class="col" onclick=slot_showhide(troop_box)>Troops</div>
+                </div>
+                <div id="troop_box">
+                    {% for unit in troops %}
+                        <div id="{{unit.name}}" onclick=unit_showhide(this)>{{unit.name}}, {{unit.unit_cost}}pts
+                            <div hidden>
+                                <div>
+                                    {% if unit.inv_save == 0 %}
+                                        None
+                                    {% else %}
+                                        {{unit.inv_save}}+
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <h2>Your list</h2>
+        </div>
+    <div class="row">
+        the end
+    </div>
+
+
+
+
+
+
+{% endblock %}

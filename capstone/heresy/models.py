@@ -13,6 +13,7 @@ class User(AbstractUser):
     
 class Infantry(models.Model):
     name = models.CharField(max_length=50)
+    force_org = models.CharField(max_length=50, default="Troops")
     movement = models.IntegerField(default=7)
     weapon_skill = models.IntegerField(default=4)
     ballistic_skill = models.IntegerField(default=4)
@@ -23,6 +24,7 @@ class Infantry(models.Model):
     attacks = models.IntegerField(default=1)
     leadership = models.IntegerField(default=7)
     armour_save = models.IntegerField(default=3)
+    inv_save = models.IntegerField(default=0)
     weapon_list= models.TextField(blank=True, default="")
     equipment = models.TextField(blank=True, default="")
     unit_cost = models.IntegerField(default=0)
@@ -33,11 +35,14 @@ class Infantry(models.Model):
         end_list = {}
         for item in raw_list:
             split_list = re.split('(\d+)', item)
-            end_list.update({split_list[0]:split_list[1]})
+            end_list.update({split_list[0].rstrip().lstrip():split_list[1].rstrip().lstrip()})
         return end_list
+    
+    class Meta:
+        ordering = ['force_org']
         
     def __str__(self):
-        return f"{self.name}: {self.split_weapons()}"
+        return f"{self.force_org} - {self.name}: {self.split_weapons()}"
     
     
 class Weapons(models.Model):

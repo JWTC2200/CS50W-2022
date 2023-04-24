@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 
-from .models import User
+from .models import User, Infantry, Weapons
 
 
 # Create your views here.
@@ -68,4 +68,22 @@ def register(request):
         return redirect("index")
     else: 
         return render(request, "heresy/register.html")
+    
+
+def builder(request):
+    
+    troops = Infantry.objects.filter(force_org = "Troops")
+    elites = Infantry.objects.filter(force_org = "Elites")
+    heavysupport = Infantry.objects.filter(force_org = "Heavy Support")
+    tac = Infantry.objects.get(name = "Legion Heavy Support Squad").split_weapons()
+    print(tac["Lascannon"])
+    
+    
+    context = {
+        "troops": troops,
+        "elites": elites,
+        "heavysupport": heavysupport,
+        }
+    
+    return render(request, "heresy/builder.html", context)
 
