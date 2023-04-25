@@ -16,7 +16,7 @@
                     <div class="btn" onclick=slot_showhide(troop_box)>Troops</div>
                 </div>
                 <div id="troop_box">
-                    {% for unit in elites %}
+                    {% for unit in all_units %}
                         <div>
                             <div class="btn" id="{{unit.pk}}" onclick="unit_showhide(this)">{{unit.name}}, {{unit.unit_cost}}pts</div>
                             <!--Add hidden tag in below div!-->
@@ -68,7 +68,7 @@
                                             <div>Additional members: ({{unit.member_cost}}pts)</div>
                                             <div class="row">
                                                     <input class="col form-control mb-2" type="number" placeholder="0" max="{{unit.squad_add}}" id="memberadded_{{unit.pk}}" onchange="total_unitMembers(this)" data-points="{{unit.member_cost}}" autocomplete="off" max="{{unit.squad_add}}" min="0">
-                                                <div class="col" id="member_total_{{unit.pk}}">Total: 0pts</div>
+                                                <div class="col" id="member_total_{{unit.pk}}">0pts</div>
                                             </div>                                            
                                         {% endif %}
                                     </div>
@@ -97,7 +97,7 @@
                                         </table>                                        
                                     </div>                                    
                                 </form>
-                                <h5 id="{{unit.name}}_fulltotal">UNIT TOTAL: {{unit.unit_cost}}pts</h5>
+                                <h5 id="fulltotal_{{unit.pk}}">UNIT TOTAL: {{unit.unit_cost}}pts</h5>
                                 <div class="btn" id="addbutton_{{unit.pk}}" onclick="addUnitToList(this)">ADD TO LIST</div>
                             </div>                            
                         </div>

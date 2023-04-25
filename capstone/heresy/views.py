@@ -69,7 +69,7 @@ def register(request):
     else: 
         return render(request, "heresy/register.html")
     
-
+@login_required
 def builder(request):
     all_units = Infantry.objects.all()
     troops = Infantry.objects.filter(force_org = "Troops")
@@ -88,3 +88,16 @@ def builder(request):
     
     return render(request, "heresy/builder.html", context)
 
+
+@login_required
+def unit_total(request):
+    if request.method == "PUT":
+        unit_id = json.loads(request.body).get("unit_pk")
+        unit = Infantry.objects.get(pk = unit_id).split_weapons()
+        squad_value = Infantry.objects.get(pk = unit_id).unit_cost
+        return JsonResponse({
+            "list": unit,
+            "squad":squad_value,
+            }, safe=True)
+    
+    return HttpResponse(403)
