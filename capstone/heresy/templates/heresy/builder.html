@@ -20,7 +20,7 @@
                         <div>
                             <div class="btn" id="{{unit.pk}}" onclick="unit_showhide(this)">{{unit.name}}, {{unit.unit_cost}}pts</div>
                             <!--Add hidden tag in below div!-->
-                            <div id="box{{unit.pk}}">
+                            <div id="box{{unit.pk}}" hidden>
                                 <form>                                    
                                     <div class="table-responsive">
                                         <table class="table table-striped">
@@ -107,6 +107,7 @@
                 </div>
             </div>
         </div>
+        <!-- SECOND HALF OF THE PAGE FOR LIST SAVING-->
         <div class="col-lg-6">
             <h2>Your list</h2>
         </div>

@@ -1,6 +1,20 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import re
+from django.core.exceptions import ValidationError
+
+
+# validators
+
+def validate_force_org(value):
+    slotlist = [
+        "HQ", "Elites", "Troops", "Fast Attack", "Heavy Support",
+    ]
+    if value not in slotlist:
+        raise ValidationError(
+            "Must be one of: HQ, Elites, Troops, Fast Attack, Heavy Support"
+        )
+
 
 # Create your models here.
 
@@ -13,7 +27,7 @@ class User(AbstractUser):
     
 class Infantry(models.Model):
     name = models.CharField(max_length=50)
-    force_org = models.CharField(max_length=50, default="Troops")
+    force_org = models.CharField(max_length=50, default="Troops", validators=[validate_force_org])
     movement = models.IntegerField(default=7)
     weapon_skill = models.IntegerField(default=4)
     ballistic_skill = models.IntegerField(default=4)
@@ -32,7 +46,7 @@ class Infantry(models.Model):
     squad_size = models.IntegerField(default=5)
     squad_add = models.IntegerField(default=0)
     squad_max = models.IntegerField(default=5)
-    
+                   
     def split_weapons(self):
         raw_list = self.weapon_list.split(",")
         end_list = {}
@@ -61,4 +75,31 @@ class Weapons(models.Model):
     
     def __str__(self):
         return f"{self.name}: Range{self.distance} Str{self.strength} AP{self.armour_pen} Effects:{self.effects_list()}"
+    
+
+class ArmyLists(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+    created = models.DateTimeField(auto_now_add=True)
+    points = models.IntegerField(default=0)
+    
+    class Meta:
+        ordering = ['name']
+        
+    def __str__(self):
+        return f"{self.name}: {self.points}"
+
+
+class ListBlocks(models.Model):
+    armylist = models.ForeignKey(ArmyLists, on_delete=models.CASCADE)
+    force_org = models.CharField(max_length=50, validators=[validate_force_org])
+    unit_name = models.CharField(max_length=50)
+    unit_points = models.IntegerField(default=0)
+    unit_weapons = models.TextField(blank=True, default="")
+    
+    def split_wepaons(self):
+        pass
+    
+    def __str__(self):
+        return f"{self.unit_name}: {self.unit_points}"
     
