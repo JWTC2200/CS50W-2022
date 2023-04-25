@@ -29,6 +29,9 @@ class Infantry(models.Model):
     equipment = models.TextField(blank=True, default="")
     unit_cost = models.IntegerField(default=0)
     member_cost = models.IntegerField(default=0)
+    squad_size = models.IntegerField(default=5)
+    squad_add = models.IntegerField(default=0)
+    squad_max = models.IntegerField(default=5)
     
     def split_weapons(self):
         raw_list = self.weapon_list.split(",")

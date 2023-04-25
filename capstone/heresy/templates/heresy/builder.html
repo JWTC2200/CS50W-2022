@@ -13,21 +13,92 @@
             <h2>Units</h2>
             <div>
                 <div class="row">
-                    <div class="col" onclick=slot_showhide(troop_box)>Troops</div>
+                    <div class="btn" onclick=slot_showhide(troop_box)>Troops</div>
                 </div>
                 <div id="troop_box">
-                    {% for unit in troops %}
-                        <div id="{{unit.name}}" onclick=unit_showhide(this)>{{unit.name}}, {{unit.unit_cost}}pts
-                            <div hidden>
-                                <div>
-                                    {% if unit.inv_save == 0 %}
-                                        None
-                                    {% else %}
-                                        {{unit.inv_save}}+
-                                    {% endif %}
+                    {% for unit in all_units %}
+                        <div>
+                            <div class="btn" id="{{unit.pk}}" onclick="unit_showhide(this.id)">{{unit.name}}, {{unit.unit_cost}}pts</div>
+                            <div id="box{{unit.pk}}" hidden>
+                                <div>                                    
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">M</th>
+                                                    <th scope="col">WS</th>
+                                                    <th scope="col">BS</th>
+                                                    <th scope="col">S</th>
+                                                    <th scope="col">T</th>
+                                                    <th scope="col">W</th>
+                                                    <th scope="col">I</th>
+                                                    <th scope="col">A</th>
+                                                    <th scope="col">Ld</th>
+                                                    <th scope="col">Sv</th>
+                                                    <th scope="col">Inv</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>{{unit.movement}}</td>
+                                                    <td>{{unit.weapon_skill}}</td>
+                                                    <td>{{unit.ballistic_skill}}</td>
+                                                    <td>{{unit.strength}}</td>
+                                                    <td>{{unit.toughness}}</td>
+                                                    <td>{{unit.wounds}}</td>
+                                                    <td>{{unit.initiative}}</td>
+                                                    <td>{{unit.attacks}}</td>
+                                                    <td>{{unit.leadership}}</td>
+                                                    <td>{{unit.armour_save}}</td>
+                                                    <td>
+                                                        {% if unit.inv_save != 0 %}
+                                                            {{unit.inv_save}}+
+                                                        {% else %}
+                                                            N/a
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>            
+                                            </tbody>
+                                        </table>
+                                    </div> 
+                                    <div class="container">
+                                        <div>Squad size: {{unit.squad_size}} (max: {{unit.squad_max}})</div>
+                                        {% if unit.squad_add > 0 %}
+                                            <div>Additional members: ({{unit.member_cost}}pts)</div>
+                                            <div class="row">
+                                                <input  class="col input-sm" type="number" value="0" max="{{unit.squad_add}}">
+                                                <div class="col">total:</div>
+                                            </div>
+                                            
+                                        {% endif %}
+                                    </div>
+                                    <div class="container"> 
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <td scope="col"><h5>Weapons</h5></td>
+                                                    <td scope="col">Points</td>
+                                                    <td scope="col">Equipped</td>
+                                                    <td scope="col">Total</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for key, values in unit.split_weapons.items %}
+                                                    <tr>
+                                                        <td>{{key}}</td>
+                                                        <td id="cost{{key}}">{{values}}</td>
+                                                        <td><input type="number" id="no{{key}}" onchange=totalPoints(this.id)></td>
+                                                        <td id="total{{key}}">0 </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>                                            
+                                        </table>
+                                        
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <hr>
                     {% endfor %}
                 </div>
             </div>

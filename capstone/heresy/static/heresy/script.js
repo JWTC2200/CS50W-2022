@@ -1,12 +1,12 @@
 function unit_showhide(id) {
-    console.log(id.firstElementChild)
-
-    if (id.firstElementChild.hidden === false) {
-        id.firstElementChild.hidden = true
-    }else {
-        id.firstElementChild.hidden = false
+    console.log(id)
+    box = document.querySelector(`#box${id}`)
+    console.log(box)
+    if (box.hidden === false) {
+        box.hidden = true
+    } else {
+        box.hidden = false
     }
-
 }
 
 function slot_showhide(id) {
@@ -15,4 +15,8 @@ function slot_showhide(id) {
     }else {
         id.hidden = false
     }
+}
+
+function total_points(id) {
+    console.log(id)
 }

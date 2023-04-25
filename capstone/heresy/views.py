@@ -71,7 +71,7 @@ def register(request):
     
 
 def builder(request):
-    
+    all_units = Infantry.objects.all()
     troops = Infantry.objects.filter(force_org = "Troops")
     elites = Infantry.objects.filter(force_org = "Elites")
     heavysupport = Infantry.objects.filter(force_org = "Heavy Support")
@@ -83,6 +83,7 @@ def builder(request):
         "troops": troops,
         "elites": elites,
         "heavysupport": heavysupport,
+        "all_units": all_units,
         }
     
     return render(request, "heresy/builder.html", context)
