@@ -93,11 +93,12 @@ def builder(request):
 def unit_total(request):
     if request.method == "PUT":
         unit_id = json.loads(request.body).get("unit_pk")
-        unit = Infantry.objects.get(pk = unit_id).split_weapons()
-        squad_value = Infantry.objects.get(pk = unit_id).unit_cost
+        model = Infantry.objects.get(pk = unit_id)
         return JsonResponse({
-            "list": unit,
-            "squad":squad_value,
+            "name": model.name,
+            "list": model.split_weapons(),
+            "squad":model.unit_cost,
+            "force_org": model.force_org,
             }, safe=True)
     
     return HttpResponse(403)

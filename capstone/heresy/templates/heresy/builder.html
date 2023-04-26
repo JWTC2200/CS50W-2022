@@ -6,6 +6,7 @@
     <div class="row">
         <div class="mx-auto col-10 col-md-8 col-lg6">
             <h1>List builder</h1>
+            <div class="btn btn-warning">TESTING BUTTON</div>
         </div>
     </div>
     <div class="row">
@@ -88,7 +89,7 @@
                                                         <td>{{key}}</td>
                                                         <td id="{{key}}_cost_{{unit.pk}}">{{values}}</td>
                                                         <td>
-                                                            <input class="form-control" type="number" id="{{key}}_{{unit.pk}}" placeholder="0" autocomplete="off" max="{{unit.squad_max}}" min="0" onchange=total_weaponPoints(this)>
+                                                            <input class="form-control" type="number" id="{{key}}_{{unit.pk}}" placeholder="0" autocomplete="off" max="{{unit.squad_max}}" min="0" onchange="total_weaponPoints(this)">
                                                         </td>
                                                         <td id="{{key}}_total_{{unit.pk}}">0</td>
                                                     </tr>
@@ -98,7 +99,7 @@
                                     </div>                                    
                                 </form>
                                 <h5 id="fulltotal_{{unit.pk}}">UNIT TOTAL: {{unit.unit_cost}}pts</h5>
-                                <div class="btn" id="addbutton_{{unit.pk}}" onclick="addUnitToList(this)">ADD TO LIST</div>
+                                <div class="btn" id="addbutton_{{unit.pk}}" onclick="addUnitToList(this, 'add')">ADD TO LIST</div>
                             </div>                            
                         </div>
                         <hr>
@@ -110,6 +111,10 @@
         <!-- SECOND HALF OF THE PAGE FOR LIST SAVING-->
         <div class="col-lg-6">
             <h2>Your list</h2>
+            <div class="container" id="list-container">
+
+                
+            </div>
         </div>
     <div class="row">
         the end
