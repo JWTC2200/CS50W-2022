@@ -3,9 +3,13 @@ div[class="row"] {
 }
 
 div[class^="col-"] {
-    outline: 2px dotted rgba(0, 0, 0, 0.5);
+    outline: 2px solid rgba(0, 0, 0, 0.5);
 }
 
 table {
     table-layout:fixed;
+}
+
+ul {
+    list-style-type: none;
 }

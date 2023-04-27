@@ -116,8 +116,13 @@ function recalculateUnitTotal(unit_pk) {
             }
         })
         const squad_total =  response["squad"]
-        const member_total = parseInt(document.getElementById(`member_total_${unit_pk}`).innerHTML)
-        const full_total = squad_total + member_total + weapon_total
+        let member_tot = document.getElementById(`member_total_${unit_pk}`)
+        if (member_tot) {
+            member_tot = parseInt(document.getElementById(`member_total_${unit_pk}`).innerHTML)
+        } else {
+            member_tot = 0
+        }
+        const full_total = squad_total + member_tot + weapon_total
         const total_html = document.getElementById(`fulltotal_${unit_pk}`)
         // change total html
         total_html.innerHTML = `UNIT TOTAL: ${full_total}pts`
@@ -154,9 +159,8 @@ function addUnitToList(button) {
         })
         // get unit size
         const squad_added = document.getElementById(`memberadded_${id_num}`)
-        if (squad_added.value) {
+        if (squad_added) {
             squad_size = squad_size + Number(squad_added.value)
-            console.log(squad_size)
         }
         
         const unit_total = document.getElementById(`fulltotal_${id_num}`).innerHTML.replace(/[^\d]/g, "")
@@ -195,6 +199,7 @@ function add_list_html(id_num, weapon_array, list_items, unit_total, unit_name, 
     if (weapon_array != "") {
         let weapon_ul = document.createElement("ul")
         weapon_ul.setAttribute("id", `luwpli_${list_items}`)
+        weapon_ul.setAttribute("class", "list-group list-group-flush")
         // add weapons to list
         for (i = 0; i < weapon_array.length; ++i) {
             let weapon_li = document.createElement("li")
@@ -239,6 +244,7 @@ function change_armyvalue(unit_total) {
     
 function save_whole_list() {
     const list_items = localStorage.getItem("list_items")
+    const warning_count = 0
     for (i = 1; i <= list_items; i++) {
         let unit_exist = document.getElementById(`listunit_${i}`)
         if (unit_exist) {
@@ -267,11 +273,17 @@ function save_whole_list() {
             })
             .then(response => response.json())
             .then(response => {
-                console.log(response)
+                if (response["warning"]) {
+                    apply_warning(response["warning"])
+                }
             })
         }
-        
-        
+        else {
+            warning_count += 1
+         }                
+    }
+    if (warning_count >= list_items) {
+        apply_warning("List is empty")
     }
 }
 
@@ -289,4 +301,9 @@ function list_name() {
         let nametext = document.querySelector("#nametext").value
         listname.innerHTML = nametext
     }
+}
+
+function apply_warning(warning) {
+    const warning_box = document.querySelector("#warning-div")
+    warning_box.innerHTML = warning
 }

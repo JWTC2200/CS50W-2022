@@ -76,6 +76,8 @@ def builder(request):
     troops = Infantry.objects.filter(force_org = "Troops")
     elites = Infantry.objects.filter(force_org = "Elites")
     heavysupport = Infantry.objects.filter(force_org = "Heavy Support")
+    fastattack = Infantry.objects.filter(force_org = "Fast Attack")
+    hq = Infantry.objects.filter(force_org = "HQ")
     tac = Infantry.objects.get(name = "Legion Heavy Support Squad").split_weapons()
     print(tac["Lascannon"])
     
@@ -84,6 +86,8 @@ def builder(request):
         "troops": troops,
         "elites": elites,
         "heavysupport": heavysupport,
+        "fastattack": fastattack,
+        "hq": hq,
         "all_units": all_units,
         }
     
@@ -109,14 +113,17 @@ def unit_total(request):
 def savelist(request):
     if request.method == "PUT":
         data = json.loads(request.body)
+        if not data:
+            return JsonResponse({"warning": "Not a valid list."})
         print(data)
         # create army list and check for existing name
         army_name = data.get("list_name")
         print(army_name)
         try:
             check = ArmyLists.objects.get(name = army_name)
-            print(check)
+            return JsonResponse({"warning":"List with that name already exists."})
         except ObjectDoesNotExist:
-            print(1)
+            pass
+            
         
     return HttpResponse(403)
