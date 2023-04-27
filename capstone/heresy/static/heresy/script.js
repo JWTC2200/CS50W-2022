@@ -1,3 +1,11 @@
+const force_org_id = [
+    "idHQ",
+    "idElites",
+    "idTroops",
+    "idFastAttack",
+    "idHeavySupport",
+]
+
 document.addEventListener("DOMContentLoaded", () => {
     unit_list_items()
 })
@@ -21,8 +29,6 @@ function getCookie(name) {
   }
   return cookieValue;
 }
-
-
 
 function unit_showhide(unit) {
     box = document.querySelector(`#box${unit.id}`)
@@ -127,7 +133,9 @@ function addUnitToList(button, method) {
     .then(response => {
         const unit_name = response["name"];
         const weapon_list = Object.keys(response["list"]);
+        const force_org = response["force_org"]
         // empty weapon list
+
         weapon_list.forEach((key) => {
             // get number of each weapon
             let weapon_no = document.getElementById(`${key}_${id_num}`).value
@@ -139,32 +147,68 @@ function addUnitToList(button, method) {
         list_items++;
         localStorage.setItem("list_items", list_items)
         // add items to html
-        add_list_html(id_num, weapon_array, list_items, unit_total, unit_name)
+        add_list_html(id_num, weapon_array, list_items, unit_total, unit_name, force_org)
     })
 }
 
 
-function add_list_html(id_num, weapon_array, list_items, unit_total, unit_name) {
-    const container = document.querySelector("#list-container")
+function add_list_html(id_num, weapon_array, list_items, unit_total, unit_name, force_org) {
+    const container = document.getElementById(`id${force_org}`)
 
-    var unit_box = document.createElement("div");
+    let unit_box = document.createElement("div");
     unit_box.setAttribute("id", `listunit_${list_items}`);
-    unit_box_weapons = ""
-    let list_li = ""
-    for (i = 0; i < weapon_array.length; ++i) {
-        console.log(weapon_array[i])
-        li_html = `<li>${weapon_array[i]}</li>`
-        list_li = list_li + li_html
+    // create unit title bar
+    let unit_title = document.createElement("div");
+    unit_title.setAttribute("class", "row")
+    // unit title name
+    let title_name = document.createElement("div")
+    title_name.setAttribute("id", `luname_${list_items}`)
+    title_name.setAttribute("class", "col")
+    title_name.innerHTML = `${unit_name}`
+    // unit title points, rght aligned
+    let title_pts = document.createElement("div")
+    title_pts.setAttribute("id", `lupts_${list_items}`)
+    title_pts.setAttribute("class", "col text-end")
+    title_pts.innerHTML = `${unit_total}pts`
+    // add onto title div
+    unit_title.appendChild(title_name)
+    unit_title.appendChild(title_pts)
+    // add onto main unit box
+    unit_box.appendChild(unit_title)
+    console.log(unit_box)
+    // create list of unit weapons if applicable
+    if (weapon_array != "") {
+        let weapon_ul = document.createElement("ul")
+        weapon_ul.setAttribute("id", `luwpli_${list_items}`)
+        // add weapons to list
+        for (i = 0; i < weapon_array.length; ++i) {
+            let weapon_li = document.createElement("li")
+            weapon_li.setAttribute("id", `luwp_${list_items}_${i}`)
+            weapon_li.innerHTML = `${weapon_array[i]}`
+            weapon_ul.appendChild(weapon_li)
+        }     
+        unit_box.appendChild(weapon_ul)   
     }
-    if (list_li != "") {
-        list_li = `<div><ul>${list_li}</ul></div>`
-    }
-    var list_head = `
-    <div class="luname_${id_num}">${unit_name}</div>
-    <div class="lupts_${id_num}">${unit_total}pts</div>
-    `;
-    
-    unit_box.innerHTML = list_head + list_li
 
+    // send to correct force org slot
     container.appendChild(unit_box)
+}
+
+    
+function save_whole_list() {
+    const list_items = localStorage.getItem("list_items")
+    for (i = 1; i <= list_items; i++) {
+        let unit_name = document.getElementById(`luname_${i}`).innerHTML
+        let unit_points = document.getElementById(`lupts_${i}`).innerHTML.replace("pts","")
+        let unit_weapons = document.getElementById(`luwpli_${i}`)
+        let weapon_list = []
+        if (unit_weapons) {
+            let lilist = unit_weapons.getElementsByTagName("li").length
+            for (j = 0; j < lilist; ++j) {
+                let liweapon = document.getElementById(`luwp_${i}_${j}`).innerHTML
+                weapon_list.push(liweapon)
+            }
+        }
+        console.log(weapon_list)
+    }
 }
