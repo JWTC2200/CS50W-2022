@@ -143,8 +143,8 @@ function addUnitToList(button) {
         const unit_name = response["name"];
         const weapon_list = Object.keys(response["list"]);
         const force_org = response["force_org"]
+        let squad_size = Number(response["members"])
         // empty weapon list
-
         weapon_list.forEach((key) => {
             // get number of each weapon
             let weapon_no = document.getElementById(`${key}_${id_num}`).value
@@ -152,16 +152,23 @@ function addUnitToList(button) {
                 weapon_array.push(`${weapon_no} ${key}`)
             }         
         })
+        // get unit size
+        const squad_added = document.getElementById(`memberadded_${id_num}`)
+        if (squad_added.value) {
+            squad_size = squad_size + Number(squad_added.value)
+            console.log(squad_size)
+        }
+        
         const unit_total = document.getElementById(`fulltotal_${id_num}`).innerHTML.replace(/[^\d]/g, "")
         list_items++;
         localStorage.setItem("list_items", list_items)
         // add items to html
-        add_list_html(id_num, weapon_array, list_items, unit_total, unit_name, force_org)
+        add_list_html(id_num, weapon_array, list_items, unit_total, unit_name, force_org, squad_size)
     })
 }
 
 
-function add_list_html(id_num, weapon_array, list_items, unit_total, unit_name, force_org) {
+function add_list_html(id_num, weapon_array, list_items, unit_total, unit_name, force_org,squad_size) {
     const container = document.getElementById(`id${force_org}`)
 
     let unit_box = document.createElement("div");
@@ -173,7 +180,7 @@ function add_list_html(id_num, weapon_array, list_items, unit_total, unit_name, 
     let title_name = document.createElement("div")
     title_name.setAttribute("id", `luname_${list_items}`)
     title_name.setAttribute("class", "col")
-    title_name.innerHTML = `${unit_name}`
+    title_name.innerHTML = `${unit_name} (${squad_size})`
     // unit title points, rght aligned
     let title_pts = document.createElement("div")
     title_pts.setAttribute("id", `lupts_${list_items}`)
@@ -213,7 +220,6 @@ function add_list_html(id_num, weapon_array, list_items, unit_total, unit_name, 
 
 function add_delete_event(list_items, unit_total) {
     let button = document.getElementById(`deletebox_${list_items}`)
-    console.log(button)
     button.addEventListener("click", () => {
         let box = document.getElementById(`listunit_${list_items}`)
         box.remove()

@@ -100,6 +100,7 @@ def unit_total(request):
             "list": model.split_weapons(),
             "squad":model.unit_cost,
             "force_org": model.force_org,
+            "members": model.squad_size,
             }, safe=True)
     
     return HttpResponse(403)
