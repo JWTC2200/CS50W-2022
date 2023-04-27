@@ -8,8 +8,28 @@ const force_org_id = [
 
 document.addEventListener("DOMContentLoaded", () => {
     unit_list_items()
+    army_list_value()
 })
-    // keep track of list items in local storage. 
+
+// keep track of list items in local storage. 
+function unit_list_items() {
+    if (!localStorage.getItem("list_items")) {
+        localStorage.setItem("list_items", 0)
+    }
+    // reset if the page resets (list resets)
+    if (localStorage.getItem("list_items") != 0) {
+        localStorage.setItem("list_items", 0)
+    }
+}
+
+function army_list_value() {
+    if (!localStorage.getItem("army_points")) {
+        localStorage.setItem("army_points", 0)
+    }
+    if (localStorage.getItem("army_points") != 0) {
+        localStorage.setItem("army_points", 0)
+    }
+}
 
 
 const csrftoken = getCookie('csrftoken');
@@ -105,19 +125,8 @@ function recalculateUnitTotal(unit_pk) {
     })
 }
 
-function unit_list_items() {
-    if (!localStorage.getItem("list_items")) {
-        localStorage.setItem("list_items", 0)
-    }
-    // reset if the page resets (list resets)
-    if (localStorage.getItem("list_items") != 0) {
-        localStorage.setItem("list_items", 0)
-    }
-}
 
-
-
-function addUnitToList(button, method) {
+function addUnitToList(button) {
     let list_items = localStorage.getItem("list_items")
     let id_num = button.id.split("_")[1]
     let weapon_array = []
@@ -175,7 +184,6 @@ function add_list_html(id_num, weapon_array, list_items, unit_total, unit_name, 
     unit_title.appendChild(title_pts)
     // add onto main unit box
     unit_box.appendChild(unit_title)
-    console.log(unit_box)
     // create list of unit weapons if applicable
     if (weapon_array != "") {
         let weapon_ul = document.createElement("ul")
@@ -189,26 +197,90 @@ function add_list_html(id_num, weapon_array, list_items, unit_total, unit_name, 
         }     
         unit_box.appendChild(weapon_ul)   
     }
+    // add delete button
+    let box_delete = document.createElement("div")
+    box_delete.setAttribute("id", `deletebox_${list_items}`)
+    box_delete.setAttribute("class", "btn btn-sm")
+    box_delete.innerHTML = "Remove"
+    unit_box.appendChild(box_delete)
 
     // send to correct force org slot
     container.appendChild(unit_box)
+    // add delete box to button
+    add_delete_event(list_items, unit_total)
+    change_armyvalue(unit_total)
+}
+
+function add_delete_event(list_items, unit_total) {
+    let button = document.getElementById(`deletebox_${list_items}`)
+    console.log(button)
+    button.addEventListener("click", () => {
+        let box = document.getElementById(`listunit_${list_items}`)
+        box.remove()
+        change_armyvalue(`-${unit_total}`)
+    })
+    
+}
+
+function change_armyvalue(unit_total) {
+    let armypoints = document.querySelector("#armyvalue")
+    let newvalue = Number(localStorage.getItem("army_points"))
+    newvalue = newvalue + Number(unit_total)
+    localStorage.setItem("army_points", newvalue)
+    armypoints.innerHTML = `${newvalue}pts`
 }
 
     
 function save_whole_list() {
     const list_items = localStorage.getItem("list_items")
     for (i = 1; i <= list_items; i++) {
-        let unit_name = document.getElementById(`luname_${i}`).innerHTML
-        let unit_points = document.getElementById(`lupts_${i}`).innerHTML.replace("pts","")
-        let unit_weapons = document.getElementById(`luwpli_${i}`)
-        let weapon_list = []
-        if (unit_weapons) {
-            let lilist = unit_weapons.getElementsByTagName("li").length
-            for (j = 0; j < lilist; ++j) {
-                let liweapon = document.getElementById(`luwp_${i}_${j}`).innerHTML
-                weapon_list.push(liweapon)
+        let unit_exist = document.getElementById(`listunit_${i}`)
+        if (unit_exist) {
+            let unit_name = document.getElementById(`luname_${i}`).innerHTML
+            let unit_points = document.getElementById(`lupts_${i}`).innerHTML.replace("pts","")
+            let unit_weapons = document.getElementById(`luwpli_${i}`)
+            let weapon_list = []
+            if (unit_weapons) {
+                let lilist = unit_weapons.getElementsByTagName("li").length
+                for (j = 0; j < lilist; ++j) {
+                    let liweapon = document.getElementById(`luwp_${i}_${j}`).innerHTML
+                    weapon_list.push(liweapon)
+                }
             }
+            let list_name = document.querySelector("#listname").innerHTML
+            // send data to be stored
+            fetch('/savelist', {
+                method: "PUT",
+                headers: {'X-CSRFToken': csrftoken},
+                body: JSON.stringify({
+                "unit_name": unit_name,
+                "unit_points": unit_points,
+                "unit_weapons": weapon_list,
+                "list_name": list_name,
+                })
+            })
+            .then(response => response.json())
+            .then(response => {
+                console.log(response)
+            })
         }
-        console.log(weapon_list)
+        
+        
+    }
+}
+
+function list_name() {
+    let listname = document.querySelector("#listname")
+    let newname = document.querySelector("#newname")
+    if (newname.hidden === true) {
+        newname.hidden = false
+        listname.hidden = true
+        console.log(2)
+    } 
+    else {
+        newname.hidden = true
+        listname.hidden = false
+        let nametext = document.querySelector("#nametext").value
+        listname.innerHTML = nametext
     }
 }

@@ -5,9 +5,10 @@ import json
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.core.exceptions import ObjectDoesNotExist
 
 
-from .models import User, Infantry, Weapons
+from .models import User, Infantry, Weapons, ArmyLists, ListBlocks
 
 
 # Create your views here.
@@ -101,4 +102,20 @@ def unit_total(request):
             "force_org": model.force_org,
             }, safe=True)
     
+    return HttpResponse(403)
+
+@login_required
+def savelist(request):
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        print(data)
+        # create army list and check for existing name
+        army_name = data.get("list_name")
+        print(army_name)
+        try:
+            check = ArmyLists.objects.get(name = army_name)
+            print(check)
+        except ObjectDoesNotExist:
+            print(1)
+        
     return HttpResponse(403)

@@ -99,7 +99,7 @@
                                     </div>                                    
                                 </form>
                                 <h5 id="fulltotal_{{unit.pk}}">UNIT TOTAL: {{unit.unit_cost}}pts</h5>
-                                <div class="btn" id="addbutton_{{unit.pk}}" onclick="addUnitToList(this, 'add')">ADD TO LIST</div>
+                                <div class="btn" id="addbutton_{{unit.pk}}" onclick="addUnitToList(this)">ADD TO LIST</div>
                             </div>                            
                         </div>
                         <hr>
@@ -110,28 +110,34 @@
         </div>
         <!-- SECOND HALF OF THE PAGE FOR LIST SAVING-->
         <div class="col-lg-6">
-            <h2>Your list</h2>
+            <div class="btn"  onclick="list_name()">
+                <h2 id="listname">Your list 1:</h2>
+            </div>
+            <div id="newname" hidden>
+                <input id="nametext" autocomplete="off">
+                <div class="btn text-end" onclick="list_name()">Submit</div>
+            </div>
+            <div class="container">
+                <h5 id="armyvalue">0pts</h5>
+            </div>
             <div class="container" id="list-container">
-                <div id="idHQ" class="container">
+                <div id="idHQ" >
                     <h5>HQ:</h5>
                 </div>
-                <div id="idElites" class="container">
+                <div id="idElites">
                     <h5>Elites:</h5>
                 </div>
-                <div id="idTroops" class="container">
+                <div id="idTroops">
                     <h5>Troops:</h5>
                 </div>
-                <div id="idFast Attack" class="container">
+                <div id="idFast Attack">
                     <h5>Fast Attack:</h5>
                 </div>
-                <div id="idHeavy Support" class="container">
+                <div id="idHeavy Support">
                     <h5>Heavy Support</h5>
                 </div>
             </div>
-        </div>
-    <div class="row">
-        <div class="col">1</div>
-        <div class="col text-end">2</div>
+        </div>   
     </div>
 
 
