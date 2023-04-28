@@ -20,9 +20,11 @@ def validate_force_org(value):
 
 
 class User(AbstractUser):
+    def saved_armylists(self):
+        return ArmyLists.objects.filter(user = self)
     
     def __str__(self):
-        return f"{self.username}"
+        return f"{self.saved_armylists()}"
     
     
 class Infantry(models.Model):
@@ -55,6 +57,8 @@ class Infantry(models.Model):
             end_list.update({split_list[0].strip():split_list[1].strip()})
         return end_list
     
+    
+    
     class Meta:
         ordering = ['force_org']
         
@@ -86,8 +90,11 @@ class ArmyLists(models.Model):
     class Meta:
         ordering = ['name']
         
+    def list_units(self):
+        return ListBlocks.objects.filter(armylist = self)
+        
     def __str__(self):
-        return f"{self.name}: {self.points}"
+        return f"{self.name}"
 
 
 class ListBlocks(models.Model):

@@ -9,6 +9,7 @@ urlpatterns = [
     path("builder", views.builder, name="builder"),
     path("unittotal", views.unit_total, name="unittotal"),
     path("savelist", views.savelist, name="savelist"),
-    path("list_name_check", views.list_name_check, name="list_name_check")
+    path("list_name_check", views.list_name_check, name="list_name_check"),
+    path("damage", views.damage_page, name="damage")
     
 ]

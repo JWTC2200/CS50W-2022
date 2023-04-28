@@ -158,3 +158,12 @@ def savelist(request):
         
     return HttpResponse(403)
 
+@login_required
+def damage_page(request):
+    lists = ArmyLists.objects.filter(user = request.user)
+    
+    context = {
+        "lists": lists,
+    }
+    
+    return render(request, "heresy/damagepage.html",context)
