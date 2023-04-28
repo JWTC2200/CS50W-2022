@@ -16,9 +16,9 @@
             <div>
                 <!--HQ-->
                 <div class="row">
-                    <div class="btn" onclick=slot_showhide(troop_box)><h4>HQ</h4></div>
+                    <div class="btn" onclick="slot_showhide('hq_box')"><h4>HQ</h4></div>
                 </div>
-                <div id="troop_box">
+                <div id="hq_box">
                     {% for unit in hq %}
                         <div>
                             <div class="btn" id="{{unit.pk}}" onclick="unit_showhide(this)">{{unit.name}}, {{unit.unit_cost}}pts</div>
@@ -108,9 +108,9 @@
                 </div>
                 <!--ELITES-->
                 <div class="row">
-                    <div class="btn" onclick=slot_showhide(troop_box)><h4>Elites</h4></div>
+                    <div class="btn" onclick="slot_showhide('elite_box')"><h4>Elites</h4></div>
                 </div>
-                <div id="troop_box">
+                <div id="elite_box">
                     {% for unit in elites %}
                         <div>
                             <div class="btn" id="{{unit.pk}}" onclick="unit_showhide(this)">{{unit.name}}, {{unit.unit_cost}}pts</div>
@@ -200,7 +200,7 @@
                 </div>
                 <!--TROOPS-->
                 <div class="row">
-                    <div class="btn" onclick=slot_showhide(troop_box)><h4>Troops</h4></div>
+                    <div class="btn" onclick="slot_showhide('troop_box')"><h4>Troops</h4></div>
                 </div>
                 <div id="troop_box">
                     {% for unit in troops %}
@@ -292,9 +292,9 @@
                 </div>
                 <!--FAST ATTACK-->
                 <div class="row">
-                    <div class="btn" onclick=slot_showhide(troop_box)><h4>Fast Attack</h4></div>
+                    <div class="btn" onclick="slot_showhide('fast_box')"><h4>Fast Attack</h4></div>
                 </div>
-                <div id="troop_box">
+                <div id="fast_box">
                     {% for unit in fastattack %}
                         <div>
                             <div class="btn" id="{{unit.pk}}" onclick="unit_showhide(this)">{{unit.name}}, {{unit.unit_cost}}pts</div>
@@ -384,9 +384,9 @@
                 </div>
                 <!--HEAVY SUPPORT-->
                 <div class="row">
-                    <div class="btn" onclick=slot_showhide(troop_box)><h4>Heavy Support</h4></div>
+                    <div class="btn" onclick="slot_showhide('heavy_box')"><h4>Heavy Support</h4></div>
                 </div>
-                <div id="troop_box">
+                <div id="heavy_box">
                     {% for unit in heavysupport %}
                         <div>
                             <div class="btn" id="{{unit.pk}}" onclick="unit_showhide(this)">{{unit.name}}, {{unit.unit_cost}}pts</div>
@@ -480,7 +480,7 @@
         <!-- SECOND HALF OF THE PAGE FOR LIST SAVING-->
         <div class="col-lg-6">
             <div class="btn"  onclick="list_name()">
-                <h2 id="listname">Your list 1:</h2>
+                <h2 id="listname">Your list 1</h2>
             </div>
             <div id="newname" hidden>
                 <input id="nametext" autocomplete="off">

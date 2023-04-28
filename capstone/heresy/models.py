@@ -52,7 +52,7 @@ class Infantry(models.Model):
         end_list = {}
         for item in raw_list:
             split_list = re.split('(\d+)', item)
-            end_list.update({split_list[0].rstrip().lstrip():split_list[1].rstrip().lstrip()})
+            end_list.update({split_list[0].strip():split_list[1].strip()})
         return end_list
     
     class Meta:
@@ -96,8 +96,9 @@ class ListBlocks(models.Model):
     unit_name = models.CharField(max_length=50)
     unit_points = models.IntegerField(default=0)
     unit_weapons = models.TextField(blank=True, default="")
+    unit_members = models.IntegerField(default=1)
     
-    def split_wepaons(self):
+    def split_weaponsns(self):
         pass
     
     def __str__(self):

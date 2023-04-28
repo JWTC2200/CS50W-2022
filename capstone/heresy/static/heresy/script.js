@@ -59,7 +59,8 @@ function unit_showhide(unit) {
     }
 }
 
-function slot_showhide(id) {
+function slot_showhide(box) {
+    let id = document.getElementById(`${box}`)
     if (id.hidden === false) {
         id.hidden = true
     }else {
@@ -243,63 +244,91 @@ function change_armyvalue(unit_total) {
 
     
 function save_whole_list() {
-    const list_items = localStorage.getItem("list_items")
-    const warning_count = 0
-    for (i = 1; i <= list_items; i++) {
-        let unit_exist = document.getElementById(`listunit_${i}`)
-        if (unit_exist) {
-            let unit_name = document.getElementById(`luname_${i}`).innerHTML
-            let unit_points = document.getElementById(`lupts_${i}`).innerHTML.replace("pts","")
-            let unit_weapons = document.getElementById(`luwpli_${i}`)
-            let weapon_list = []
-            if (unit_weapons) {
-                let lilist = unit_weapons.getElementsByTagName("li").length
-                for (j = 0; j < lilist; ++j) {
-                    let liweapon = document.getElementById(`luwp_${i}_${j}`).innerHTML
-                    weapon_list.push(liweapon)
-                }
-            }
-            let list_name = document.querySelector("#listname").innerHTML
-            // send data to be stored
-            fetch('/savelist', {
-                method: "PUT",
-                headers: {'X-CSRFToken': csrftoken},
-                body: JSON.stringify({
-                "unit_name": unit_name,
-                "unit_points": unit_points,
-                "unit_weapons": weapon_list,
-                "list_name": list_name,
+    let listname = document.querySelector("#listname").innerHTML
+    console.log(listname)
+    fetch('/list_name_check', {
+        method: "PUT",
+        headers: {'X-CSRFToken': csrftoken},
+        body: JSON.stringify({
+            "newname": listname,
+        })
+    })
+    .then(response => response.json())
+    .then(response => {
+        if (response["warning"]) {
+            apply_warning(response["warning"])
+        } else {
+            const list_items = localStorage.getItem("list_items")
+            const warning_count = 0
+            const list_points = document.querySelector("#armyvalue").innerHTML.replace("pts", "")
+            for (i = 1; i <= list_items; i++) {
+                let unit_exist = document.getElementById(`listunit_${i}`)
+                if (unit_exist) {
+                    let unit_name = document.getElementById(`luname_${i}`).innerHTML
+                    let unit_points = document.getElementById(`lupts_${i}`).innerHTML.replace("pts","")
+                    let unit_weapons = document.getElementById(`luwpli_${i}`)
+                    let weapon_list = []
+                    if (unit_weapons) {
+                        let lilist = unit_weapons.getElementsByTagName("li").length
+                        for (j = 0; j < lilist; ++j) {
+                            let liweapon = document.getElementById(`luwp_${i}_${j}`).innerHTML
+                            weapon_list.push(liweapon)
+                        }
+                    }
+                let list_name = document.querySelector("#listname").innerHTML
+                // send data to be stored
+                fetch('/savelist', {
+                    method: "PUT",
+                    headers: {'X-CSRFToken': csrftoken},
+                    body: JSON.stringify({
+                    "unit_name": unit_name,
+                    "unit_points": unit_points,
+                    "unit_weapons": weapon_list,
+                    "list_name": list_name,
+                    "list_points": list_points,
+                    })
                 })
-            })
-            .then(response => response.json())
-            .then(response => {
-                if (response["warning"]) {
-                    apply_warning(response["warning"])
-                }
-            })
+                .then(response => response.json())
+                .then(response => {
+                    if (response["warning"]) {
+                        apply_warning(response["warning"])
+                    }
+                })
+            }
+            else {
+                warning_count += 1
+            }                
         }
-        else {
-            warning_count += 1
-         }                
-    }
-    if (warning_count >= list_items) {
-        apply_warning("List is empty")
-    }
+        if (warning_count >= list_items) {
+            apply_warning("List is empty")
+        }
+                
+        }
+        
+    })
+
+    
 }
 
 function list_name() {
     let listname = document.querySelector("#listname")
     let newname = document.querySelector("#newname")
+    let nametext = document.querySelector("#nametext").value
+    
     if (newname.hidden === true) {
         newname.hidden = false
         listname.hidden = true
-        console.log(2)
     } 
     else {
+        apply_warning("")
         newname.hidden = true
         listname.hidden = false
-        let nametext = document.querySelector("#nametext").value
-        listname.innerHTML = nametext
+        if (nametext === "") {
+            apply_warning("Please enter a list name")
+        } else {
+            listname.innerHTML = nametext
+        }
+        
     }
 }
 
@@ -307,3 +336,7 @@ function apply_warning(warning) {
     const warning_box = document.querySelector("#warning-div")
     warning_box.innerHTML = warning
 }
+
+
+        
+        

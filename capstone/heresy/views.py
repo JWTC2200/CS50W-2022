@@ -110,20 +110,51 @@ def unit_total(request):
     return HttpResponse(403)
 
 @login_required
+def list_name_check(request):
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        try:
+            ArmyLists.objects.get(name = data.get("newname"))
+            return JsonResponse({"warning":"List with that name already exists."}) 
+        except ObjectDoesNotExist:
+            if not data.get("newname"):
+                return JsonResponse({"warning":"Please enter a list name"})
+            return HttpResponse(200)
+                
+    return HttpResponse(403)
+
+@login_required
 def savelist(request):
     if request.method == "PUT":
         data = json.loads(request.body)
         if not data:
             return JsonResponse({"warning": "Not a valid list."})
-        print(data)
         # create army list and check for existing name
         army_name = data.get("list_name")
-        print(army_name)
         try:
-            check = ArmyLists.objects.get(name = army_name)
-            return JsonResponse({"warning":"List with that name already exists."})
+            ArmyLists.objects.get(name = army_name)
         except ObjectDoesNotExist:
-            pass
+            ArmyLists(user = request.user, name = army_name, points = data["list_points"]).save()
             
+        raw_name = data["unit_name"].split("(")
+        unit_name = raw_name[0].strip()
+        unit_members = raw_name[1].strip().replace(")","")
+        unit_weapons = data["unit_weapons"]
+        force_org = Infantry.objects.get(name=unit_name).force_org
+        unit_points = data["unit_points"]
+        
+        ListBlocks(
+            armylist = ArmyLists.objects.get(name = army_name),
+            force_org = force_org,
+            unit_name = unit_name,
+            unit_points = unit_points,
+            unit_weapons = unit_weapons,
+            unit_members = unit_members,
+            ).save()
+        
+        print("success")
+        return JsonResponse({"warning": "success"})
+        
         
     return HttpResponse(403)
+
