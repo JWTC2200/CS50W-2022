@@ -6,9 +6,12 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
+from fractions import Fraction
+from decimal import Decimal
 
 
 from .models import User, Infantry, Weapons, ArmyLists, ListBlocks
+from .calculations import attack_calculations 
 
 
 # Create your views here.
@@ -114,9 +117,11 @@ def list_name_check(request):
     if request.method == "PUT":
         data = json.loads(request.body)
         try:
-            ArmyLists.objects.get(name = data.get("newname"))
-            return JsonResponse({"warning":"List with that name already exists."}) 
+            ArmyLists.objects.filter(user=request.user).get(name = data.get("newname"))                  
+            return JsonResponse({"warning":"List with that name already exists 55."}) 
+        
         except ObjectDoesNotExist:
+            print("does not exist")
             if not data.get("newname"):
                 return JsonResponse({"warning":"Please enter a list name"})
             return HttpResponse(200)
@@ -132,7 +137,7 @@ def savelist(request):
         # create army list and check for existing name
         army_name = data.get("list_name")
         try:
-            ArmyLists.objects.get(name = army_name)
+            ArmyLists.objects.filter(user = request.user).get(name = army_name)
         except ObjectDoesNotExist:
             ArmyLists(user = request.user, name = army_name, points = data["list_points"]).save()
             
@@ -144,7 +149,7 @@ def savelist(request):
         unit_points = data["unit_points"]
         
         ListBlocks(
-            armylist = ArmyLists.objects.get(name = army_name),
+            armylist = ArmyLists.objects.filter(user = request.user).get(name = army_name),
             force_org = force_org,
             unit_name = unit_name,
             unit_points = unit_points,
@@ -159,11 +164,28 @@ def savelist(request):
     return HttpResponse(403)
 
 @login_required
-def damage_page(request):
+def list_view(request):
     lists = ArmyLists.objects.filter(user = request.user)
     
-    context = {
-        "lists": lists,
-    }
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        list_id = data["list_id"]
+        listcheck = ArmyLists.objects.filter(name = list_id).get(user = request.user)
+        list_blocks = listcheck.list_units()
+        print(list_blocks)
+        return JsonResponse({"warning": "success"})
     
-    return render(request, "heresy/damagepage.html",context)
+    if request.method == "GET":
+        context = {
+            "lists": lists,
+        }
+        return render(request, "heresy/listview.html", context)
+    
+    return redirect("index")
+
+
+
+@login_required
+def damage_page(request):
+
+    return render(request, "heresy/damagepage.html")

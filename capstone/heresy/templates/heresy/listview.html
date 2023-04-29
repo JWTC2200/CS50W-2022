@@ -1,0 +1,23 @@
+{% extends "heresy/layout.html" %}
+
+{% block body %}
+
+    <h3 class="text-center">Lists</h3>
+    <hr>
+
+    <div class="row flex-grow-1">
+        <div class="col-4">
+            <div id="list-example" class="list-group">
+                {% for list in lists %}
+                <a class="list-group-item list-view-click-button" id="{{list.name}}">{{list.name}}, {{list.points}}pts</a>
+                {% endfor %}
+                </div>
+        </div>
+        <div class="col-8">
+            <div data-bs-spy="scroll" data-bs-target="#list-example" data-bs-offset="0" class="scrollspy-example" tabindex="0">
+            </div>
+        </div>
+    </div>
+        
+
+{% endblock%}

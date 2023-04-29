@@ -24,7 +24,7 @@ class User(AbstractUser):
         return ArmyLists.objects.filter(user = self)
     
     def __str__(self):
-        return f"{self.saved_armylists()}"
+        return f"{self.username}"
     
     
 class Infantry(models.Model):
@@ -88,7 +88,7 @@ class ArmyLists(models.Model):
     points = models.IntegerField(default=0)
     
     class Meta:
-        ordering = ['name']
+        ordering = ['-created']
         
     def list_units(self):
         return ListBlocks.objects.filter(armylist = self)

@@ -10,7 +10,7 @@
         <script src="{% static 'heresy/script.js' %}"></script>
     </head>
     <body>
-        <div class="container-fluid">
+        <div class="container">
             <nav class="navbar navbar-light navbar-expand-md bg-faded justify-content-center">
                 <div class="container">
                     <a href="{% url 'index' %}" class="navbar-brand d-flex w-50 me-auto">Heresy Builder</a>
@@ -18,7 +18,10 @@
                         {%if user.is_authenticated %}
                             <ul class="navbar-nav w-100 justify-content-center">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'builder' %}">Create List</a>
+                                    <a class="nav-link" href="{% url 'builder' %}">Build</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'list_view' %}">Lists</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="{% url 'damage' %}">Damage</a>
@@ -27,6 +30,9 @@
                         {% endif %}
                         <ul class="nav navbar-nav ms-auto w-100 justify-content-end">
                             {% if user.is_authenticated %}
+                                <li class="nav-item">
+                                    <a class="nav-link">{{user.username}} </a>
+                                </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="
                                     {% url 'logout' %}">Logout</a>

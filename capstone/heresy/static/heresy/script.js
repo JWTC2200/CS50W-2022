@@ -9,6 +9,7 @@ const force_org_id = [
 document.addEventListener("DOMContentLoaded", () => {
     unit_list_items()
     army_list_value()
+    list_view_click_buttons()
 })
 
 // keep track of list items in local storage. 
@@ -245,7 +246,6 @@ function change_armyvalue(unit_total) {
     
 function save_whole_list() {
     let listname = document.querySelector("#listname").innerHTML
-    console.log(listname)
     fetch('/list_name_check', {
         method: "PUT",
         headers: {'X-CSRFToken': csrftoken},
@@ -301,13 +301,9 @@ function save_whole_list() {
         }
         if (warning_count >= list_items) {
             apply_warning("List is empty")
-        }
-                
-        }
-        
-    })
-
-    
+        }                
+        }        
+    })    
 }
 
 function list_name() {
@@ -337,6 +333,25 @@ function apply_warning(warning) {
     warning_box.innerHTML = warning
 }
 
+function list_view_click_buttons() {
+    document.querySelectorAll(".list-view-click-button").forEach(button => {
+        button.addEventListener('click', () => {
+            load_list_view(button.id)
+        })
+    })
+}
 
         
-        
+function load_list_view(id) {
+    fetch('/list_view', {
+        method: "PUT",
+        headers: {'X-CSRFToken': csrftoken},
+        body: JSON.stringify({
+        "list_id" : id,
+        })
+    })
+    .then(response => response.json())
+    .then(response => {
+        console.log(response["warning"])
+    })
+}

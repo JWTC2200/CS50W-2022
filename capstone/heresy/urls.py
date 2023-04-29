@@ -10,6 +10,7 @@ urlpatterns = [
     path("unittotal", views.unit_total, name="unittotal"),
     path("savelist", views.savelist, name="savelist"),
     path("list_name_check", views.list_name_check, name="list_name_check"),
-    path("damage", views.damage_page, name="damage")
+    path("damage", views.damage_page, name="damage"),
+    path("list_view", views.list_view, name="list_view"),
     
 ]
