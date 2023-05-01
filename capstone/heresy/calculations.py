@@ -26,7 +26,7 @@ def attack_calculations(BS, attack, target):
         apen = Weapons.objects.get(name=wp).armour_pen
         
         # RESULT
-        result = attack_to_hit(BS) * attack_to_wound(strength, target["toughness"]) * attack_armour(apen, target["armour"]) * attack_inv(target["inv"])
+        result = attack_to_hit(BS) * attack_to_wound(strength, target["toughness"], target["wounds"]) * attack_armour(apen, target["armour"]) * attack_inv(target["inv"])
         print(f"result {result}")
     
 
@@ -35,9 +35,10 @@ def attack_to_hit(BS):
     print(f"tohit {odds}")
     return odds
 
-def attack_to_wound(S, T):
+def attack_to_wound(S, T, W):
     S = int(S)
     T = int(T)
+    W = int(W)
     odds = 0
     if S == T:
         odds = Fraction(1,2)
@@ -49,6 +50,8 @@ def attack_to_wound(S, T):
         odds = Fraction(1,3)
     if (S - T) < -1:
         odds = Fraction(1,6)
+    if (S / T) >= 2:
+        odds *= W
     print(f"to wound {odds}")
     return odds
 
