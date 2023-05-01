@@ -1,31 +1,73 @@
 {% extends "heresy/layout.html" %}
 
 {% block body %}
-    damage page
+    <div class="btn btn-primary" onclick="testing()">Test</div>
 
-    {% for list in lists%}
-        <Div> {{list}} </Div>
-    {% endfor %}
+    <select class="form-select">
+        <option selected disabled>Choose a list</option>
+        {% for list in user_lists%}
+            <option onclick="test2()" value="{{list.name}}">{{list.name}}</option>
+        {% endfor %}
+    </select>
+
     <div class="row">
+        <!--Select options-->
         <div class="col-4">
-            <div id="list-example" class="list-group">
-                <a class="list-group-item list-group-item-action" href="#list-item-1">Item 1</a>
-                <a class="list-group-item list-group-item-action" href="#list-item-2">Item 2</a>
-                <a class="list-group-item list-group-item-action" href="#list-item-3">Item 3</a>
-                <a class="list-group-item list-group-item-action" href="#list-item-4">Item 4</a>
-              </div>
+            <!--list select-->
+            <div>
+                <h5>Choose List</h5>
+                <select class="form-select" id="damage-list-select" onchange="damage_list_select(this.value)" autocomplete="off">
+                    <option selected disabled>Choose a list</option>
+                    {% for list in user_lists%}
+                        <option  value="{{list.name}}">{{list.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!--List unit select-->
+            <div>
+                <h5>Choose Unit</h5>
+                <select class="form-select" id="damage-unit-select" autocomplete="off">
+                    <option selected disabled>Choose a list</option>
+                </select>
+            </div>
+            
         </div>
+        <!--damage tables-->
         <div class="col-8">
-            <div data-bs-spy="scroll" data-bs-target="#list-example" data-bs-offset="0" class="scrollspy-example" tabindex="0">
-                <h4 id="list-item-1">Item 1</h4>
-                <p>his is some placeholder content for the scrollspy page. Note that as you scroll down the page, the appropriate navigation link is highlighted. It's repeated throughout the component example. We keep adding some more example copy here to emphasize the scrolling and highlighting.</p>
-                <h4 id="list-item-2">Item 2</h4>
-                <p>his is some placeholder content for the scrollspy page. Note that as you scroll down the page, the appropriate navigation link is highlighted. It's repeated throughout the component example. We keep adding some more example copy here to emphasize the scrolling and highlighting.</p>
-                <h4 id="list-item-3">Item 3</h4>
-                <p>his is some placeholder content for the scrollspy page. Note that as you scroll down the page, the appropriate navigation link is highlighted. It's repeated throughout the component example. We keep adding some more example copy here to emphasize the scrolling and highlighting.</p>
-                <h4 id="list-item-4">Item 4</h4>
-                <p>his is some placeholder content for the scrollspy page. Note that as you scroll down the page, the appropriate navigation link is highlighted. It's repeated throughout the component example. We keep adding some more example copy here to emphasize the scrolling and highlighting.</p>
-              </div>
+            <h5>Your Unit</h5>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">M</th>
+                        <th scope="col">WS</th>
+                        <th scope="col">BS</th>
+                        <th scope="col">S</th>
+                        <th scope="col">T</th>
+                        <th scope="col">W</th>
+                        <th scope="col">I</th>
+                        <th scope="col">A</th>
+                        <th scope="col">Ld</th>
+                        <th scope="col">Sv</th>
+                        <th scope="col">Inv</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td id="unit_movement"></td>
+                        <td id="unit_weapon_skill"></td>
+                        <td id="unit_ballistic_skill"></td>
+                        <td id="unit_strength"></td>
+                        <td id="unit_toughness"></td>
+                        <td id="unit_wounds"></td>
+                        <td id="unit_initiative"></td>
+                        <td id="unit_attacks"></td>
+                        <td id="unit_leadership"></td>
+                        <td id="unit_armour_save"></td>
+                        <td id="unit_invulnerable"></td>
+                    </tr>            
+                </tbody>
+            </table>
+            <h5>Target Stats</h5>
         </div>
     </div>
 {% endblock%}

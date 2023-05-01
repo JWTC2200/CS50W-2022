@@ -12,14 +12,14 @@
         <div class="col-lg-6">
             <h2>Units</h2>
             <div>
-                <!--HQ-->
+                <!--HQ-->                
                 <div class="row">
-                    <div class="btn" onclick="slot_showhide('hq_box')"><h4>HQ</h4></div>
+                    <div class="btn text-start" onclick="slot_showhide('hq_box')"><h4>HQ</h4></div>
                 </div>
-                <div id="hq_box">
+                 <div id="hq_box">
                     {% for unit in hq %}
                         <div>
-                            <div class="btn" id="{{unit.pk}}" onclick="unit_showhide(this)">{{unit.name}}, {{unit.unit_cost}}pts</div>
+                            <div class="btn btn-outline-secondary" id="{{unit.pk}}" onclick="unit_showhide(this)">{{unit.name}}, {{unit.unit_cost}}pts</div>
                             <div id="box{{unit.pk}}" hidden>
                                 <form>                                    
                                     <div class="table-responsive">
@@ -100,18 +100,17 @@
                                 <h5 id="fulltotal_{{unit.pk}}">UNIT TOTAL: {{unit.unit_cost}}pts</h5>
                                 <div class="btn btn-outline-secondary" id="addbutton_{{unit.pk}}" onclick="addUnitToList(this)">ADD TO LIST</div>
                             </div>                            
-                        </div>
-                        <hr>                        
+                        </div>                                               
                     {% endfor %}
                 </div>
                 <!--ELITES-->
                 <div class="row">
-                    <div class="btn" onclick="slot_showhide('elite_box')"><h4>Elites</h4></div>
+                    <div class="btn text-start" onclick="slot_showhide('elite_box')"><h4>Elites</h4></div>
                 </div>
                 <div id="elite_box">
                     {% for unit in elites %}
                         <div>
-                            <div class="btn" id="{{unit.pk}}" onclick="unit_showhide(this)">{{unit.name}}, {{unit.unit_cost}}pts</div>
+                            <div class="btn btn-outline-secondary" id="{{unit.pk}}" onclick="unit_showhide(this)">{{unit.name}}, {{unit.unit_cost}}pts</div>
                             <div id="box{{unit.pk}}" hidden>
                                 <form>                                    
                                     <div class="table-responsive">
@@ -192,18 +191,17 @@
                                 <h5 id="fulltotal_{{unit.pk}}">UNIT TOTAL: {{unit.unit_cost}}pts</h5>
                                 <div class="btn btn-outline-secondary" id="addbutton_{{unit.pk}}" onclick="addUnitToList(this)">ADD TO LIST</div>
                             </div>                            
-                        </div>
-                        <hr>                                               
+                        </div>                                            
                     {% endfor %}
                 </div>
                 <!--TROOPS-->
                 <div class="row">
-                    <div class="btn" onclick="slot_showhide('troop_box')"><h4>Troops</h4></div>
+                    <div class="btn text-start" onclick="slot_showhide('troop_box')"><h4>Troops</h4></div>
                 </div>
                 <div id="troop_box">
                     {% for unit in troops %}
                         <div>
-                            <div class="btn" id="{{unit.pk}}" onclick="unit_showhide(this)">{{unit.name}}, {{unit.unit_cost}}pts</div>
+                            <div class="btn btn-outline-secondary" id="{{unit.pk}}" onclick="unit_showhide(this)">{{unit.name}}, {{unit.unit_cost}}pts</div>
                             <div id="box{{unit.pk}}" hidden>
                                 <form>                                    
                                     <div class="table-responsive">
@@ -284,18 +282,17 @@
                                 <h5 id="fulltotal_{{unit.pk}}">UNIT TOTAL: {{unit.unit_cost}}pts</h5>
                                 <div class="btn btn-outline-secondary" id="addbutton_{{unit.pk}}" onclick="addUnitToList(this)">ADD TO LIST</div>
                             </div>                            
-                        </div>
-                        <hr>                        
+                        </div>                    
                     {% endfor %}
                 </div>
                 <!--FAST ATTACK-->
                 <div class="row">
-                    <div class="btn" onclick="slot_showhide('fast_box')"><h4>Fast Attack</h4></div>
+                    <div class="btn text-start" onclick="slot_showhide('fast_box')"><h4>Fast Attack</h4></div>
                 </div>
                 <div id="fast_box">
                     {% for unit in fastattack %}
                         <div>
-                            <div class="btn" id="{{unit.pk}}" onclick="unit_showhide(this)">{{unit.name}}, {{unit.unit_cost}}pts</div>
+                            <div class="btn btn-outline-secondary" id="{{unit.pk}}" onclick="unit_showhide(this)">{{unit.name}}, {{unit.unit_cost}}pts</div>
                             <div id="box{{unit.pk}}" hidden>
                                 <form>                                    
                                     <div class="table-responsive">
@@ -376,18 +373,17 @@
                                 <h5 id="fulltotal_{{unit.pk}}">UNIT TOTAL: {{unit.unit_cost}}pts</h5>
                                 <div class="btn btn-outline-secondary" id="addbutton_{{unit.pk}}" onclick="addUnitToList(this)">ADD TO LIST</div>
                             </div>                            
-                        </div>
-                        <hr>                        
+                        </div>                      
                     {% endfor %}
                 </div>
                 <!--HEAVY SUPPORT-->
                 <div class="row">
-                    <div class="btn" onclick="slot_showhide('heavy_box')"><h4>Heavy Support</h4></div>
+                    <div class="btn text-start" onclick="slot_showhide('heavy_box')"><h4>Heavy Support</h4></div>
                 </div>
                 <div id="heavy_box">
                     {% for unit in heavysupport %}
                         <div>
-                            <div class="btn" id="{{unit.pk}}" onclick="unit_showhide(this)">{{unit.name}}, {{unit.unit_cost}}pts</div>
+                            <div class="btn btn-outline-secondary" id="{{unit.pk}}" onclick="unit_showhide(this)">{{unit.name}}, {{unit.unit_cost}}pts</div>
                             <div id="box{{unit.pk}}" hidden>
                                 <form>                                    
                                     <div class="table-responsive">
@@ -469,8 +465,6 @@
                                 <div class="btn btn-outline-secondary" id="addbutton_{{unit.pk}}" onclick="addUnitToList(this)">ADD TO LIST</div>
                             </div>                            
                         </div>
-                        <hr>
-                        
                     {% endfor %}
                 </div>
             </div>

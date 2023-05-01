@@ -246,11 +246,13 @@ function change_armyvalue(unit_total) {
     
 function save_whole_list() {
     let listname = document.querySelector("#listname").innerHTML
+    const list_points = document.querySelector("#armyvalue").innerHTML.replace("pts", "")
     fetch('/list_name_check', {
         method: "PUT",
         headers: {'X-CSRFToken': csrftoken},
         body: JSON.stringify({
             "newname": listname,
+            "list_points": list_points,
         })
     })
     .then(response => response.json())
@@ -260,8 +262,11 @@ function save_whole_list() {
         } else {
             const list_items = localStorage.getItem("list_items")
             const warning_count = 0
-            const list_points = document.querySelector("#armyvalue").innerHTML.replace("pts", "")
+            let items_array = []
             for (i = 1; i <= list_items; i++) {
+                items_array.push(i)
+            }
+            items_array.forEach(async (i) => {
                 let unit_exist = document.getElementById(`listunit_${i}`)
                 if (unit_exist) {
                     let unit_name = document.getElementById(`luname_${i}`).innerHTML
@@ -275,36 +280,36 @@ function save_whole_list() {
                             weapon_list.push(liweapon)
                         }
                     }
-                let list_name = document.querySelector("#listname").innerHTML
-                // send data to be stored
-                fetch('/savelist', {
-                    method: "PUT",
-                    headers: {'X-CSRFToken': csrftoken},
-                    body: JSON.stringify({
-                    "unit_name": unit_name,
-                    "unit_points": unit_points,
-                    "unit_weapons": weapon_list,
-                    "list_name": list_name,
-                    "list_points": list_points,
+                    let list_name = document.querySelector("#listname").innerHTML
+                    // send data to be stored
+                    fetch('/savelist', {
+                        method: "PUT",
+                        headers: {'X-CSRFToken': csrftoken},
+                        body: JSON.stringify({
+                        "unit_name": unit_name,
+                        "unit_points": unit_points,
+                        "unit_weapons": weapon_list,
+                        "list_name": list_name,
+                        
+                        })
                     })
-                })
-                .then(response => response.json())
-                .then(response => {
-                    if (response["warning"]) {
-                        apply_warning(response["warning"])
-                    }
-                })
-            }
-            else {
-                warning_count += 1
-            }                
-        }
-        if (warning_count >= list_items) {
-            apply_warning("List is empty")
-        }                
-        }        
-    })    
-}
+                    .then(response => response.json())
+                    .then(response => {
+                        if (response["warning"]) {
+                            apply_warning(response["warning"])
+                        }
+                    })
+                }
+                else {
+                    warning_count += 1
+                }  
+            })                                    
+            if (warning_count >= list_items) {
+                apply_warning("List is empty")
+            }            
+        }                     
+    })        
+} 
 
 function list_name() {
     let listname = document.querySelector("#listname")
@@ -343,6 +348,11 @@ function list_view_click_buttons() {
 
         
 function load_list_view(id) {
+    const SLOTS = ["HQ", "Elites", "Troops", "Fast Attack", "Heavy Support"]
+    SLOTS.forEach(slot => {
+        let clearbox = document.getElementById(`${slot}view`)
+        clearbox.innerHTML = `<h5>${slot}:</h5>`
+    })
     fetch('/list_view', {
         method: "PUT",
         headers: {'X-CSRFToken': csrftoken},
@@ -352,6 +362,123 @@ function load_list_view(id) {
     })
     .then(response => response.json())
     .then(response => {
-        console.log(response["warning"])
+        let force_org = response["force_org"]
+        let unit_name = response["unit_name"]
+        let unit_points = response["unit_points"]
+        let unit_members = response["unit_members"]        
+        let unit_number = force_org.length
+        for (i = 0; i < unit_number; ++i) {
+            let box_slot = document.getElementById(`${force_org[i]}view`)
+            let unit_weapons = response["unit_weapons"][i]
+            let box = document.createElement("div")
+            box.setAttribute("class", "list-group-item")
+            let box_title = document.createElement("div")
+            box_title.innerHTML = `${unit_name[i]} (${unit_members[i]}): ${unit_points[i]}pts`
+            box.appendChild(box_title)
+            // turn weapon string array into an actual array
+            unit_weapons = unit_weapons.replace(/'/g, '"')
+            unit_weapons = JSON.parse(unit_weapons)
+            console.log(unit_weapons)      
+            if (unit_weapons.length > 0) {
+                unit_weapons.forEach(weapon => {
+                    let box_weapon = document.createElement("div")
+                    box_weapon.setAttribute("class", "")
+                    box_weapon.innerHTML = weapon
+                    box.appendChild(box_weapon)
+                })
+                console.log("yes")
+            }    
+            box_slot.appendChild(box)
+        }        
     })
+}
+
+function damage_list_select(list_name) {
+    console.log(list_name)
+    let select_menu = document.querySelector("#damage-unit-select")
+    select_menu.innerHTML = ""
+    let option_disabled = document.createElement("option")
+    option_disabled.setAttribute("disabled", true)
+    option_disabled.setAttribute("selected", true)
+    option_disabled.innerHTML = "Choose unit"
+    select_menu.appendChild(option_disabled)
+    fetch(`/damage_list`, {
+        method: "PUT",
+        headers: {'X-CSRFToken': csrftoken},
+        body: JSON.stringify({
+        "list_name": list_name,
+        })
+    })
+    .then(response => response.json())
+    .then(response => { 
+        Object.entries(response).forEach(entry => {
+            let [key, value] = entry;
+            fetch('/damage_unit_pk', {
+                method: "PUT",
+                headers: {'X-CSRFToken': csrftoken},
+                body: JSON.stringify({
+                "unit_pk": key,
+                })
+            })
+            .then(response => response.json())
+            .then(response => {
+                let option = document.createElement("option")
+                
+                option.setAttribute("id", `xyz${key}`)
+                option.innerHTML = `${response["name"]}: ${value}`
+                option.onclick = function () {
+                    damage_load_unit_stats(this.id)
+                }
+                select_menu.appendChild(option)
+            })
+        })              
+    })
+}
+
+function damage_load_unit_stats(unit_id) {
+    fetch('/damage_unit_stats', {
+        method: "PUT",
+        headers: {'X-CSRFToken': csrftoken},
+        body: JSON.stringify({
+        "unit_id": unit_id,
+        })
+    })
+    .then(response => response.json())
+    .then(response => {
+        document.querySelector("#unit_movement").innerHTML = response["M"]
+        document.querySelector("#unit_weapon_skill").innerHTML = response["WS"]
+        document.querySelector("#unit_ballistic_skill").innerHTML = response["BS"]
+        document.querySelector("#unit_strength").innerHTML = response["S"]
+        document.querySelector("#unit_toughness").innerHTML = response["T"]
+        document.querySelector("#unit_wounds").innerHTML = response["W"]
+        document.querySelector("#unit_initiative").innerHTML = response["I"]
+        document.querySelector("#unit_attacks").innerHTML = response["A"]
+        document.querySelector("#unit_leadership").innerHTML = response["Ld"]
+        document.querySelector("#unit_armour_save").innerHTML = `${response["Sv"]}+`
+        if (response["Inv"] === 0) {
+            document.querySelector("#unit_invulnerable").innerHTML = "None"
+        } else {
+            document.querySelector("#unit_invulnerable").innerHTML = `${response["Inv"]}+`
+        }
+    })
+    damage_calculations(unit_id)
+}
+
+function damage_calculations(unit_id) {
+    console.log(unit_id)
+}
+
+function testing() {
+    fetch('/damage', {
+        method: "PUT",
+        headers: {'X-CSRFToken': csrftoken},
+        body: JSON.stringify({
+            "test": "test",
+            "page": "link"
+        })
+    })
+}
+
+function test2() {
+    console.log(this)
 }

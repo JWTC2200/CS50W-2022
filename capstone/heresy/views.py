@@ -124,6 +124,7 @@ def list_name_check(request):
             print("does not exist")
             if not data.get("newname"):
                 return JsonResponse({"warning":"Please enter a list name"})
+            ArmyLists(user = request.user, name = data.get("newname"), points = data["list_points"]).save()
             return HttpResponse(200)
                 
     return HttpResponse(403)
@@ -135,11 +136,7 @@ def savelist(request):
         if not data:
             return JsonResponse({"warning": "Not a valid list."})
         # create army list and check for existing name
-        army_name = data.get("list_name")
-        try:
-            ArmyLists.objects.filter(user = request.user).get(name = army_name)
-        except ObjectDoesNotExist:
-            ArmyLists(user = request.user, name = army_name, points = data["list_points"]).save()
+        army_name = data.get("list_name")            
             
         raw_name = data["unit_name"].split("(")
         unit_name = raw_name[0].strip()
@@ -172,20 +169,93 @@ def list_view(request):
         list_id = data["list_id"]
         listcheck = ArmyLists.objects.filter(name = list_id).get(user = request.user)
         list_blocks = listcheck.list_units()
-        print(list_blocks)
-        return JsonResponse({"warning": "success"})
-    
+        force_org, unit_name, unit_points, unit_weapons, unit_members = ([] for i in range(5))
+        for block in list_blocks:            
+            force_org.append(block.force_org)
+            unit_name.append(block.unit_name)
+            unit_points.append(block.unit_points)
+            unit_weapons.append(block.unit_weapons)
+            unit_members.append(block.unit_members)
+            
+            
+        return JsonResponse({
+            "force_org": force_org,
+            "unit_name": unit_name,
+            "unit_points": unit_points,
+            "unit_weapons": unit_weapons,
+            "unit_members": unit_members,
+            })
+        
     if request.method == "GET":
         context = {
             "lists": lists,
         }
-        return render(request, "heresy/listview.html", context)
-    
+        return render(request, "heresy/listview.html", context)    
     return redirect("index")
 
 
 
 @login_required
 def damage_page(request):
+    user_lists = ArmyLists.objects.filter(user = request.user)
 
-    return render(request, "heresy/damagepage.html")
+    context = {
+        "user_lists": user_lists,
+    }
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        if data["page"] == "damage":
+            print("damage")
+        if data["page"] == "link":
+            print("link")
+    return render(request, "heresy/damagepage.html", context)
+
+@login_required
+def damage_list(request):
+    data = json.loads(request.body)
+    list_name = data["list_name"]
+    army_list = ArmyLists.objects.filter(user = request.user).get(name = list_name)
+    list_units = ListBlocks.objects.filter(armylist = army_list)
+    units_dict = {}
+    for unit in list_units:
+        weapons = unit.unit_weapons
+        replacelist = ["[", ",", "]", "'"]
+        for item in replacelist:
+            weapons = weapons.replace(item, "")
+        units_dict[unit.pk] = weapons
+        
+    unit_json = json.dumps(units_dict)
+    unit_json = json.loads(unit_json)
+    
+    return JsonResponse(unit_json)
+
+@login_required
+def damage_unit_pk(request):
+    data = json.loads(request.body)
+    unit_pk = data["unit_pk"]
+    name = ListBlocks.objects.get(pk = unit_pk).unit_name
+    return JsonResponse({"name": name})
+    
+@login_required
+def damage_load_unit_stats(request):
+    data = json.loads(request.body)
+    unit_name = ListBlocks.objects.get(pk = data["unit_id"].replace("xyz", "")).unit_name
+    unit_stat = Infantry.objects.get(name = unit_name)
+       
+    print(unit_stat)
+    
+    return JsonResponse({
+        "M": unit_stat.movement,
+        "WS": unit_stat.weapon_skill,
+        "BS": unit_stat.ballistic_skill,
+        "S": unit_stat.strength,
+        "T": unit_stat.toughness,
+        "W": unit_stat.wounds,
+        "I": unit_stat.initiative,
+        "A": unit_stat.attacks,
+        "Ld": unit_stat.leadership,
+        "Sv": unit_stat.armour_save,
+        "Inv": unit_stat.inv_save
+    })
+
+   
