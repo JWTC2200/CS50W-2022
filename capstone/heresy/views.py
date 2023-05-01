@@ -198,9 +198,11 @@ def list_view(request):
 @login_required
 def damage_page(request):
     user_lists = ArmyLists.objects.filter(user = request.user)
+    targets = Infantry.objects.all().order_by("pk")
 
     context = {
         "user_lists": user_lists,
+        "targets": targets,
     }
     if request.method == "PUT":
         data = json.loads(request.body)
@@ -240,10 +242,7 @@ def damage_unit_pk(request):
 def damage_load_unit_stats(request):
     data = json.loads(request.body)
     unit_name = ListBlocks.objects.get(pk = data["unit_id"].replace("xyz", "")).unit_name
-    unit_stat = Infantry.objects.get(name = unit_name)
-       
-    print(unit_stat)
-    
+    unit_stat = Infantry.objects.get(name = unit_name)  
     return JsonResponse({
         "M": unit_stat.movement,
         "WS": unit_stat.weapon_skill,
@@ -257,5 +256,20 @@ def damage_load_unit_stats(request):
         "Sv": unit_stat.armour_save,
         "Inv": unit_stat.inv_save
     })
-
+    
+@login_required
+def damage_calculations(request):
+    unit_id = json.loads(request.body)["unit_id"].replace("xyz","")
+    name = ListBlocks.objects.get(pk = unit_id).unit_name
+    bs_skill = Infantry.objects.get(name=name).ballistic_skill
+    attacks = ListBlocks.objects.get(pk = unit_id).unit_weapons
+    # get target stats 
+    target = json.loads(request.body)["target"]
+    target = Infantry.objects.get(name=target)
+    target = f"{target.toughness}-{target.wounds}-{target.armour_save}-{target.inv_save}"
+    
+    # calculations.py file
+    attack_calculations(bs_skill, attacks, target)
+    
+    return HttpResponse(999)
    

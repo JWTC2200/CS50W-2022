@@ -14,6 +14,7 @@ urlpatterns = [
     path("damage_list", views.damage_list, name="damage_list"),
     path("damage_unit_pk", views.damage_unit_pk, name="damage_unit_pk"),
     path("damage_unit_stats", views.damage_load_unit_stats, name="damage_unit_stats"),
+    path("damage_calculations", views.damage_calculations, name="damage_calculations"),
     path("list_view", views.list_view, name="list_view"),
     
 ]

@@ -15,7 +15,17 @@ def validate_force_org(value):
             "Must be one of: HQ, Elites, Troops, Fast Attack, Heavy Support"
         )
 
-
+def validate_weapon_name(value):
+    list = []
+    weapons = Weapons.objects.all()
+    for  weapon in weapons:
+        list.append(weapon.name)
+    if value in list:
+        raise ValidationError(
+            "Weapon entry already exists"
+        )
+        
+    
 # Create your models here.
 
 
@@ -67,7 +77,7 @@ class Infantry(models.Model):
     
     
 class Weapons(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, validators=[validate_weapon_name])
     distance = models.IntegerField(default=24)
     strength = models.IntegerField(default=4)
     armour_pen = models.IntegerField(default=0)

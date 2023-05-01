@@ -27,7 +27,7 @@
             <div>
                 <h5>Choose Unit</h5>
                 <select class="form-select" id="damage-unit-select" autocomplete="off">
-                    <option selected disabled>Choose a list</option>
+                    <option selected disabled>Choose unit</option>
                 </select>
             </div>
             
@@ -67,7 +67,13 @@
                     </tr>            
                 </tbody>
             </table>
-            <h5>Target Stats</h5>
+            <h5>Target:</h5>
+            <select class="form-select" id="target-select" autocomplete="off" onchange="damage_calculations_tg()">
+                <option disabled selected>Choose a target</option>
+                {% for target in targets %}
+                    <option>{{target.name}}</option>
+                {% endfor %}
+            </select>
         </div>
     </div>
 {% endblock%}

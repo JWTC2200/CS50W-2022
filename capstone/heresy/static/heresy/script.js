@@ -377,8 +377,7 @@ function load_list_view(id) {
             box.appendChild(box_title)
             // turn weapon string array into an actual array
             unit_weapons = unit_weapons.replace(/'/g, '"')
-            unit_weapons = JSON.parse(unit_weapons)
-            console.log(unit_weapons)      
+            unit_weapons = JSON.parse(unit_weapons)  
             if (unit_weapons.length > 0) {
                 unit_weapons.forEach(weapon => {
                     let box_weapon = document.createElement("div")
@@ -386,7 +385,6 @@ function load_list_view(id) {
                     box_weapon.innerHTML = weapon
                     box.appendChild(box_weapon)
                 })
-                console.log("yes")
             }    
             box_slot.appendChild(box)
         }        
@@ -394,7 +392,6 @@ function load_list_view(id) {
 }
 
 function damage_list_select(list_name) {
-    console.log(list_name)
     let select_menu = document.querySelector("#damage-unit-select")
     select_menu.innerHTML = ""
     let option_disabled = document.createElement("option")
@@ -461,11 +458,31 @@ function damage_load_unit_stats(unit_id) {
             document.querySelector("#unit_invulnerable").innerHTML = `${response["Inv"]}+`
         }
     })
-    damage_calculations(unit_id)
+    target = document.querySelector("#target-select").value
+    damage_calculations(unit_id, target)
 }
 
-function damage_calculations(unit_id) {
-    console.log(unit_id)
+function damage_calculations(unit_id, target) {
+    if (target != "Choose a target") {
+        fetch('/damage_calculations', {
+            method: "PUT",
+            headers: {'X-CSRFToken': csrftoken},
+            body: JSON.stringify({
+            "unit_id": unit_id,
+            "target": target,
+            })
+        })
+    }
+}
+
+function damage_calculations_tg() {
+    target = document.querySelector("#target-select").value 
+    unit = document.querySelector("#damage-unit-select")
+    if (unit.value != "Choose unit") {
+        unit = unit.options[unit.selectedIndex].id
+        damage_calculations(unit, target)
+    }
+    
 }
 
 function testing() {
