@@ -26,8 +26,8 @@ def attack_calculations(BS, attack, target):
         apen = Weapons.objects.get(name=wp).armour_pen
         
         # RESULT
-        result = attack_to_hit(BS) * attack_to_wound(strength, target["toughness"], target["wounds"]) * attack_armour(apen, target["armour"]) * attack_inv(target["inv"])
-        print(f"result {result}")
+        result = attack_to_hit(BS) * attack_to_wound(strength, target["toughness"], target["wounds"]) * attack_armour(apen, target["armour"]) * attack_inv(target["inv"]) * int(atk)
+        print(f"result {format(float(result), '.2f')} wounds")
     
 
 def attack_to_hit(BS):
