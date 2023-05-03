@@ -67,6 +67,7 @@
                     </tr>            
                 </tbody>
             </table>
+            <hr>
             <h5>Target:</h5>
             <select class="form-select" id="target-select" autocomplete="off" onchange="damage_calculations_tg()">
                 <option disabled selected>Choose a target</option>
@@ -74,6 +75,9 @@
                     <option>{{target.name}}</option>
                 {% endfor %}
             </select>
+            <hr>
+            <h5>Weapon Damage:</h5>
+            <div id="damage_list_box"></div>
         </div>
     </div>
 {% endblock%}

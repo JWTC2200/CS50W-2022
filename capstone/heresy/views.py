@@ -269,7 +269,8 @@ def damage_calculations(request):
     target = f"{target.toughness}-{target.wounds}-{target.armour_save}-{target.inv_save}"
     
     # calculations.py file
-    attack_calculations(bs_skill, attacks, target)
+    results = attack_calculations(bs_skill, attacks, target)
+    print(f"final {results}")
     
-    return HttpResponse(999)
+    return JsonResponse(results)
    

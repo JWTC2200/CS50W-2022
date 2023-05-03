@@ -472,6 +472,18 @@ function damage_calculations(unit_id, target) {
             "target": target,
             })
         })
+        .then(response=>response.json())
+        .then(response=>{
+            console.log(response)
+            damage_list_box = document.getElementById("damage_list_box")
+            damage_list_box.innerHTML = ""
+            for (const [key, value] of Object.entries(response)) {
+                console.log(key, value)
+                let list_item = document.createElement("div")
+                list_item.innerHTML = `${key}: ${value} wounds`
+                damage_list_box.appendChild(list_item)
+            }
+        })
     }
 }
 
