@@ -1,14 +1,7 @@
 {% extends "heresy/layout.html" %}
 
 {% block body %}
-    <div class="btn btn-primary" onclick="testing()">Test</div>
-
-    <select class="form-select">
-        <option selected disabled>Choose a list</option>
-        {% for list in user_lists%}
-            <option onclick="test2()" value="{{list.name}}">{{list.name}}</option>
-        {% endfor %}
-    </select>
+    
 
     <div class="row">
         <!--Select options-->

@@ -1,5 +1,22 @@
 {% extends "heresy/layout.html" %}
 
 {% block body %}
-    Index
+
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+        <main class="px-3">
+        <h1 class="text-center">Heresy Builder</h1>
+        <p class="lead text-center">Welcome
+            {% if user.is_authenticated %}
+                {{user.username}}
+            {% endif %} 
+            to the Heresy Builder app!
+           </p>
+        <p class="lead text-center">Here you can create a list for the Games Workshop game Horus Heresy.</p>
+        <p class="lead text-center">Create your lists in the Build tab</p>
+        <p class="lead text-center">View all your saved lists in the Lists tab</p>
+        <p class="lead text-center">See how much damage your units will deal against others in the Damage tab!</p>
+        </main>
+    </div>
+  
+    
 {% endblock%}

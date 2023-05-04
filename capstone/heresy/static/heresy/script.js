@@ -214,7 +214,7 @@ function add_list_html(id_num, weapon_array, list_items, unit_total, unit_name, 
     // add delete button
     let box_delete = document.createElement("div")
     box_delete.setAttribute("id", `deletebox_${list_items}`)
-    box_delete.setAttribute("class", "btn btn-sm")
+    box_delete.setAttribute("class", "btn btn-sm text-danger")
     box_delete.innerHTML = "Remove"
     unit_box.appendChild(box_delete)
 
