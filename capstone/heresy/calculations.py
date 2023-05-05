@@ -1,6 +1,5 @@
 from fractions import Fraction
-from decimal import Decimal
-from .models import Infantry, Weapons
+from .models import Weapons
 import re
 
 

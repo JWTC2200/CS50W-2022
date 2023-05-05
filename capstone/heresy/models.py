@@ -28,7 +28,6 @@ def validate_weapon_name(value):
     
 # Create your models here.
 
-
 class User(AbstractUser):
     def saved_armylists(self):
         return ArmyLists.objects.filter(user = self)
@@ -66,9 +65,7 @@ class Infantry(models.Model):
             split_list = re.split('(\d+)', item)
             end_list.update({split_list[0].strip():split_list[1].strip()})
         return end_list
-    
-    
-    
+
     class Meta:
         ordering = ['force_org']
         
@@ -85,8 +82,7 @@ class Weapons(models.Model):
     
     def effects_list(self):
         return self.effects.split(",")
-        
-    
+            
     def __str__(self):
         return f"{self.name}: Range{self.distance} Str{self.strength} AP{self.armour_pen} Effects:{self.effects_list()}"
     

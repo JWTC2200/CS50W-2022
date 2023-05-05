@@ -193,6 +193,16 @@ def list_view(request):
         return render(request, "heresy/listview.html", context)    
     return redirect("index")
 
+@login_required
+def delete_list(request):
+    if request.method == "POST":
+        list_name = request.POST["delete_list"]
+        list = ArmyLists.objects.filter(name = list_name).get(user = request.user)
+        list.delete()
+        
+        return redirect("list_view")
+    return redirect("list_view")
+
 
 
 @login_required

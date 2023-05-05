@@ -389,6 +389,16 @@ function load_list_view(id) {
             box_slot.appendChild(box)
         }        
     })
+    let delete_div = document.getElementById("Deleteview")
+    delete_div.innerHTML = ""
+    let delete_btn = document.createElement("button")
+    delete_btn.setAttribute("class", "btn btn-warning")
+    delete_btn.setAttribute("name", "delete_list")
+    delete_btn.setAttribute("value", `${id}`)
+    delete_btn.setAttribute("type", "submit")
+    delete_btn.innerHTML = "Delete list"
+    delete_div.appendChild(delete_btn)
+    
 }
 
 function damage_list_select(list_name) {
