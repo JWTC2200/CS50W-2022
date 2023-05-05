@@ -29,5 +29,11 @@ Script.js has a lot of functions to fetch data and change the html of the curren
 
 Views.py handles most of the work but I seperated the damage calculations into a calculations.py which uses the Fractions library as the game is played with 6-sided dice. 
 
+## How to run
+
+pip install Fraction
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver
 
 
